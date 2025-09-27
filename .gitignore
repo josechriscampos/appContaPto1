@@ -1,0 +1,17 @@
+# Dependencias
+/backend/node_modules
+
+# Archivos de entorno
+/backend/.env
+
+# Datos de Docker
+/backend/postgres-data
+
+# Logs y archivos temporales
+/backend/npm-debug.log
+/backend/logs
+/backend/*.log
+
+# Archivos de caché del sistema operativo
+.DS_Store
+Thumbs.db
