@@ -1,0 +1,196 @@
+/* Estilos Generales y Contenedor Principal */
+.login-page {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  min-height: 100vh;
+  background-color: #f3f4f6; /* bg-gray-100 */
+  font-family: 'Inter', sans-serif;
+}
+
+.login-container {
+  position: relative;
+  display: flex;
+  flex-direction: column;
+  margin: 1.5rem;
+  background-color: #ffffff;
+  box-shadow: 0 20px 25px -5px rgba(0, 0, 0, 0.1), 0 10px 10px -5px rgba(0, 0, 0, 0.04); /* shadow-2xl */
+  border-radius: 1rem;
+}
+
+/* Panel Izquierdo (Imagen y Branding) */
+.left-panel {
+  position: relative;
+}
+
+.left-panel-img {
+  width: 400px;
+  height: 100%;
+  display: none;
+  border-top-left-radius: 1rem;
+  border-bottom-left-radius: 1rem;
+  object-fit: cover;
+}
+
+.image-overlay {
+  position: absolute;
+  display: none;
+  top: 50%;
+  left: 50%;
+  transform: translate(-50%, -50%);
+  color: #ffffff;
+  text-align: center;
+}
+
+.overlay-title {
+  font-size: 1.875rem; /* text-3xl */
+  font-weight: 700;
+}
+
+.overlay-subtitle {
+  margin-top: 0.5rem;
+  font-size: 0.875rem; /* text-sm */
+}
+
+/* Panel Derecho (Formulario) */
+.right-panel {
+  display: flex;
+  flex-direction: column;
+  justify-content: center;
+  padding: 2rem;
+}
+
+.form-title {
+  margin-bottom: 0.75rem;
+  font-size: 2.25rem; /* text-4xl */
+  font-weight: 700;
+  color: #1f2937; /* text-gray-800 */
+}
+
+.form-subtitle {
+  font-weight: 300; /* font-light */
+  color: #9ca3af; /* text-gray-400 */
+  margin-bottom: 2rem;
+}
+
+/* Grupos de Inputs y Labels */
+.input-group {
+  padding-top: 1rem;
+  padding-bottom: 1rem;
+}
+
+.input-label {
+  display: block;
+  margin-bottom: 0.5rem;
+  font-size: 0.875rem; /* text-md */
+  color: #4b5563; /* text-gray-600 */
+}
+
+.input-wrapper {
+  position: relative;
+}
+
+.input-icon {
+  position: absolute;
+  left: 0.75rem;
+  top: 50%;
+  transform: translateY(-50%);
+  color: #9ca3af; /* text-gray-400 */
+}
+
+.input-field {
+  width: 100%;
+  border: 1px solid #d1d5db; /* border-gray-300 */
+  border-radius: 0.375rem;
+  padding: 0.5rem 1rem 0.5rem 2.5rem;
+  box-sizing: border-box; /* Asegura que el padding no afecte el ancho total */
+}
+
+.input-field:focus {
+  outline: none;
+  box-shadow: 0 0 0 2px #10b981; /* focus:ring-2 focus:ring-green-500 */
+}
+
+/* Mensaje de Error */
+.error-message {
+  color: #ef4444; /* text-red-500 */
+  font-size: 0.875rem; /* text-sm */
+  margin-top: 0.5rem;
+}
+
+/* Opciones del Formulario (Recordarme, Olvidaste contraseña) */
+.form-options {
+  display: flex;
+  justify-content: space-between;
+  width: 100%;
+  padding-top: 1rem;
+  padding-bottom: 1rem;
+  font-size: 0.875rem;
+  align-items: center;
+}
+
+.remember-me {
+  display: flex;
+  align-items: center;
+  color: #4b5563;
+}
+.remember-me input {
+  margin-right: 0.5rem;
+}
+
+.forgot-password {
+  font-weight: 700;
+  color: #059669; /* text-green-600 */
+  cursor: pointer;
+}
+.forgot-password:hover {
+  text-decoration: underline;
+}
+
+/* Botón de Submit */
+.submit-button {
+  width: 100%;
+  background-color: #059669; /* bg-green-600 */
+  color: #ffffff;
+  padding: 0.75rem;
+  border: none;
+  border-radius: 0.5rem;
+  margin-bottom: 1.5rem;
+  cursor: pointer;
+  transition: all 0.2s ease-in-out;
+}
+
+.submit-button:hover {
+  background-color: #047857; /* hover:bg-green-700 */
+  box-shadow: 0 4px 6px -1px rgba(0, 0, 0, 0.1), 0 2px 4px -1px rgba(0, 0, 0, 0.06); /* hover:shadow-lg */
+}
+
+/* Enlace de Registro */
+.signup-link {
+  text-align: center;
+  color: #9ca3af; /* text-gray-400 */
+}
+
+.signup-link span {
+  font-weight: 700;
+  color: #059669; /* text-green-600 */
+  margin-left: 0.5rem;
+  cursor: pointer;
+}
+.signup-link span:hover {
+  text-decoration: underline;
+}
+
+
+/* Media Query para responsividad (diseño de 2 columnas en pantallas grandes) */
+@media (min-width: 768px) {
+  .login-container {
+    flex-direction: row;
+  }
+  .left-panel-img, .image-overlay {
+    display: block;
+  }
+  .right-panel {
+    padding: 3.5rem;
+  }
+}

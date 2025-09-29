@@ -1,47 +1,79 @@
-import { prisma } from "../db.js";
+import { prisma } from "../db.js"; // <-- ÚNICA importación de prisma, al principio.
 import bcrypt from "bcryptjs";
+import { createAccessToken } from "../libs/jwt.js";
 
 // --- REGISTRO DE USUARIO ---
 export const register = async (req, res) => {
-  const { email, password, username } = req.body;
+  const { username, email, password } = req.body;
 
   try {
-    // 1. Hashear la contraseña para guardarla de forma segura
-    const passwordHash = await bcrypt.hash(password, 10); // 10 es el nivel de encriptación
-
-    // 2. Crear el nuevo usuario en la base de datos usando Prisma
+    const passwordHash = await bcrypt.hash(password, 10);
     const newUser = await prisma.user.create({
       data: {
         username,
         email,
-        password: passwordHash, // Guardamos la contraseña hasheada
+        password: passwordHash,
       },
     });
 
-    // 3. Devolver una respuesta al cliente con los datos del usuario creado
-    // (Omitimos la contraseña por seguridad)
-    res.status(201).json({
+    const token = await createAccessToken({ id: newUser.id });
+
+    res.cookie("token", token, {
+      httpOnly: true,
+      secure: process.env.NODE_ENV === "production",
+      sameSite: "strict",
+    });
+
+    return res.status(201).json({
       id: newUser.id,
       username: newUser.username,
       email: newUser.email,
-      createdAt: newUser.createdAt,
     });
   } catch (error) {
-    // Manejar el caso de que el email ya exista
-    if (error.code === 'P2002' && error.meta?.target?.includes('email')) {
-      return res.status(400).json({ message: "El correo electrónico ya está en uso" });
-    }
-    // Manejar otros errores
     console.error("Error en el registro:", error);
-    res.status(500).json({ message: "Ocurrió un error en el servidor" });
+    if (error.code === 'P2002') {
+        return res.status(400).json({ message: "El usuario o correo ya existe." });
+    }
+    return res.status(500).json({ message: "Error interno del servidor." });
   }
 };
 
-
 // --- LOGIN DE USUARIO ---
-export const login = (req, res) => {
-    // Dejaremos esta lógica para el siguiente paso,
-    // por ahora nos enfocamos en que el registro funcione.
-    res.send("login");
+export const login = async (req, res) => {
+    const { email, password } = req.body;
+    try {
+        const userFound = await prisma.user.findUnique({
+            where: { email },
+        });
+        if (!userFound) return res.status(400).json({ message: "Credenciales inválidas." });
+
+        const isMatch = await bcrypt.compare(password, userFound.password);
+        if (!isMatch) return res.status(400).json({ message: "Credenciales inválidas." });
+
+        const token = await createAccessToken({ id: userFound.id });
+
+        res.cookie("token", token, {
+            httpOnly: true,
+            secure: process.env.NODE_ENV === "production",
+            sameSite: "strict",
+        });
+
+        return res.json({
+            id: userFound.id,
+            username: userFound.username,
+            email: userFound.email,
+        });
+    } catch (error) {
+        console.error("Error en el login:", error);
+        return res.status(500).json({ message: "Error interno del servidor." });
+    }
+};
+
+// --- LOGOUT DE USUARIO ---
+export const logout = (req, res) => {
+    res.cookie("token", "", {
+        expires: new Date(0),
+    });
+    return res.sendStatus(200);
 };
 

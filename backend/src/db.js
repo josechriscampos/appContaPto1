@@ -1,24 +1,15 @@
-// 2:18:00 en el cap -3
-import { DatabaseSync } from 'node:sqlite'
-const db = new DatabaseSync(':memory:')
+import { PrismaClient } from '@prisma/client';
 
-// Execute SQL statements from strings
-db.exec(`
-    CREATE TABLE users (
-        id INTEGER PRIMARY KEY AUTOINCREMENT,
-        username TEXT UNIQUE,
-        password TEXT
-    )
-`)
+// 1. Creamos la instancia del cliente de Prisma
+export const prisma = new PrismaClient();
 
-db.exec(`
-    CREATE TABLE todos (
-        id INTEGER PRIMARY KEY AUTOINCREMENT,
-        user_id INTEGER,
-        task TEXT,
-        completed BOOLEAN DEFAULT 0,
-        FOREIGN KEY(user_id) REFERENCES users(id)
-    )    
-`)
-
-export default db
+// 2. Creamos y exportamos la función para conectar a la base de datos
+export const connectDB = async () => {
+  try {
+    await prisma.$connect();
+    console.log("✅ Database is connected");
+  } catch (error) {
+    console.error("❌ Error connecting to database:", error);
+    process.exit(1); // Si no se puede conectar, detenemos la app
+  }
+};
