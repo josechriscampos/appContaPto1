@@ -1,13 +1,11 @@
-import React from 'react';
-import ReactDOM from 'react-dom/client';
-import App from './App.jsx';
-import './styles.css'; // Asegúrate de que tus estilos globales se importen aquí
+// frontend/src/main.jsx
+import { StrictMode } from "react";
+import ReactDOM from "react-dom/client";
+import App from "./App.jsx";
+import "./styles.css";
 
-// Ya NO necesitamos BrowserRouter aquí, porque App.jsx ahora lo maneja.
-// Al quitarlo, eliminamos el conflicto de tener dos Routers.
-ReactDOM.createRoot(document.getElementById('root')).render(
-  <React.StrictMode>
+ReactDOM.createRoot(document.getElementById("root")).render(
+  <StrictMode>
     <App />
-  </React.StrictMode>,
+  </StrictMode>
 );
-

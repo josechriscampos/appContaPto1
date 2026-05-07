@@ -1,20 +1,29 @@
-# Use an official node.js runtime as a parent image
+# backend/Dockerfile
 FROM node:22-alpine
 
-# Set the working directory in the container
+# Usuario no-root
+RUN addgroup -S appgroup && adduser -S appuser -G appgroup
+
 WORKDIR /app
 
-# Copy the package.json and the package-lock.json files to the container
-COPY package*.json .
+# Copiar dependencias
+COPY package*.json ./
 
-# Install the dependencies
-RUN npm install
+# ✅ --ignore-scripts evita que postinstall corra prisma generate antes de tiempo
+RUN npm ci --omit=dev --ignore-scripts
 
-# Copy the rest of the application code
-COPY . .
+# ✅ Copiar prisma ANTES de generar el cliente
+COPY prisma ./prisma/
 
-# Expose the port that the app runs on
+# ✅ Ahora sí generamos el cliente con el schema disponible
+RUN npx prisma generate
+
+# Copiar el resto del código
+COPY src ./src/
+
+# Cambiar al usuario no-root
+USER appuser
+
 EXPOSE 5003
 
-# Define the command to run your application
-CMD ["node", "./src/server.js"]
+CMD ["node", "./src/index.js"]

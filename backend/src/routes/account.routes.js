@@ -1,22 +1,14 @@
-// src/routes/account.routes.js
+// account.routes.js — versión optimizada
 import { Router } from "express";
-import {
-  getChartOfAccounts,
-  saveChartOfAccounts,
-} from "../controllers/account.controller.js";
+import { getChartOfAccounts, saveChartOfAccounts } from "../controllers/account.controller.js";
 import { authRequired } from "../middleware/auth.middleware.js";
 import { csrfProtection } from "../middleware/csrf.middleware.js";
 
 const router = Router();
 
-// Auth + CSRF
-router.use(authRequired);
-router.use(csrfProtection);
+router.use(authRequired); // Auth en todas las rutas
 
-// Ruta para obtener el catálogo del usuario logueado
-router.get("/accounts", getChartOfAccounts);
-
-// Ruta para guardar/actualizar el catálogo completo del usuario
-router.put("/accounts", saveChartOfAccounts);
+router.get("/accounts", getChartOfAccounts);                    // GET sin CSRF
+router.put("/accounts", csrfProtection, saveChartOfAccounts);  // PUT con CSRF
 
 export default router;

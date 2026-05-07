@@ -1,15 +1,46 @@
+# backend/docker-compose.yaml
 services:
   db:
     image: postgres:16-alpine
     container_name: postgres-db
     environment:
-      POSTGRES_USER: postgres
-      POSTGRES_PASSWORD: mysecretpassword # <-- La contraseña real
-      POSTGRES_DB: contabilidad_db
+      POSTGRES_USER:     ${POSTGRES_USER}
+      POSTGRES_PASSWORD: ${POSTGRES_PASSWORD}
+      POSTGRES_DB:       ${POSTGRES_DB}
     ports:
       - "5432:5432"
     volumes:
       - postgres-data:/var/lib/postgresql/data
+    healthcheck:
+      test: ["CMD-SHELL", "pg_isready -U ${POSTGRES_USER} -d ${POSTGRES_DB}"]
+      interval: 10s
+      timeout: 5s
+      retries: 5
+    networks:
+      - app-network
+
+  backend:
+    build: .
+    container_name: backend-app
+    depends_on:
+      db:
+        condition: service_healthy  # ← espera que PG esté listo
+    environment:
+      NODE_ENV:     production
+      PORT:         5003
+      DATABASE_URL: postgresql://${POSTGRES_USER}:${POSTGRES_PASSWORD}@db:5432/${POSTGRES_DB}?schema=public
+      JWT_SECRET:   ${JWT_SECRET}
+      CSRF_SECRET:  ${CSRF_SECRET}
+      CORS_ORIGIN:  ${CORS_ORIGIN}
+    ports:
+      - "5003:5003"
+    networks:
+      - app-network
+    restart: unless-stopped
+
+networks:
+  app-network:
+    driver: bridge
 
 volumes:
   postgres-data:

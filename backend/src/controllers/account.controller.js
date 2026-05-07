@@ -1,53 +1,71 @@
-import prisma from '../prismaClient.js';
+// backend/src/controllers/account.controller.js
+import { prisma } from "../db.js"; // ✅ import correcto y consistente
 
-// --- Función para obtener el catálogo completo de un usuario ---
 export const getChartOfAccounts = async (req, res) => {
-    try {
-        const chartOfAccounts = await prisma.account.findMany({
-            where: {
-                userId: req.user.id,
-            },
-            orderBy: {
-                code: 'asc', // Ordenamos las cuentas por su código
-            },
-        });
-        res.status(200).json(chartOfAccounts);
-    } catch (error) {
-        console.error('Error al obtener el catálogo:', error);
-        res.status(500).json({ message: 'Error interno del servidor.' });
+  try {
+    const chartOfAccounts = await prisma.account.findMany({
+      where: { userId: req.user.id },
+      orderBy: { code: "asc" },
+    });
+
+    return res.status(200).json(chartOfAccounts);
+  } catch (error) {
+    if (process.env.NODE_ENV !== "production") {
+      console.error("Error al obtener catálogo:", error);
     }
+    return res.status(500).json({ 
+      message: "Error interno del servidor." 
+    });
+  }
 };
 
-// --- Función para guardar/actualizar el catálogo completo ---
-// Recibe un array de cuentas y las crea o actualiza.
 export const saveChartOfAccounts = async (req, res) => {
-    const newAccounts = req.body; // El array de cuentas viene del frontend
+  const newAccounts = req.body;
 
-    if (!Array.isArray(newAccounts)) {
-        return res.status(400).json({ message: 'El formato de los datos es incorrecto.' });
+  // Validación de formato y contenido
+  if (!Array.isArray(newAccounts) || newAccounts.length === 0) {
+    return res.status(400).json({ 
+      message: "El catálogo no puede estar vacío." 
+    });
+  }
+
+  // Validar que cada cuenta tenga los campos requeridos
+  const isValid = newAccounts.every(
+    (a) => a.code && a.name && a.type && a.category && a.levelType
+  );
+
+  if (!isValid) {
+    return res.status(400).json({ 
+      message: "Todas las cuentas deben tener código, nombre, tipo, categoría y nivel." 
+    });
+  }
+
+  try {
+    await prisma.$transaction(async (tx) => {
+      await tx.account.deleteMany({ where: { userId: req.user.id } });
+
+      await tx.account.createMany({
+        data: newAccounts.map((account) => ({
+          // ✅ Solo campos explícitos, sin spread del body
+          code: account.code.toString().trim(),
+          name: account.name.toString().trim(),
+          type: account.type.toString().trim(),
+          category: account.category.toString().trim(),
+          levelType: account.levelType.toString().trim(),
+          userId: req.user.id,
+        })),
+      });
+    });
+
+    return res.status(201).json({ 
+      message: "Catálogo guardado exitosamente." 
+    });
+  } catch (error) {
+    if (process.env.NODE_ENV !== "production") {
+      console.error("Error al guardar catálogo:", error);
     }
-
-    try {
-        // Usamos una transacción de Prisma para asegurar que toda la operación
-        // se complete con éxito o falle por completo.
-        await prisma.$transaction(async (tx) => {
-            // 1. Borramos el catálogo antiguo del usuario para empezar de cero.
-            await tx.account.deleteMany({
-                where: { userId: req.user.id },
-            });
-
-            // 2. Insertamos todas las nuevas cuentas.
-            await tx.account.createMany({
-                data: newAccounts.map(account => ({
-                    ...account,
-                    userId: req.user.id, // Aseguramos que pertenezcan al usuario correcto
-                })),
-            });
-        });
-
-        res.status(201).json({ message: 'Catálogo guardado exitosamente.' });
-    } catch (error) {
-        console.error('Error al guardar el catálogo:', error);
-        res.status(500).json({ message: 'Error interno del servidor.' });
-    }
+    return res.status(500).json({ 
+      message: "Error interno del servidor." 
+    });
+  }
 };

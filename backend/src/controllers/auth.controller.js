@@ -2,60 +2,50 @@
 import { prisma } from "../db.js";
 import bcrypt from "bcryptjs";
 import { createAccessToken } from "../libs/jwt.js";
+import { blacklistToken } from "../libs/tokenBlacklist.js";
 
-// --------- HELPERS DE SEGURIDAD ---------
-
-// Reglas de contraseña:
-// - mínimo 8 caracteres
-// - al menos 1 mayúscula, 1 minúscula y 1 número
 const isStrongPassword = (password) => {
   const strongPasswordRegex = /^(?=.*[a-z])(?=.*[A-Z])(?=.*\d).{8,}$/;
   return strongPasswordRegex.test(password);
 };
 
-// Opciones de cookie seguras (dev vs prod)
 const isProduction = process.env.NODE_ENV === "production";
 
 const authCookieOptions = {
-  httpOnly: true,               // No accesible desde JS en el navegador
-  secure: isProduction,         // Solo por HTTPS en producción
+  httpOnly: true,
+  secure: isProduction,
   sameSite: isProduction ? "strict" : "lax",
   path: "/",
   maxAge: 1000 * 60 * 60 * 24 * 7, // 7 días
 };
 
-// --------- REGISTRO DE USUARIO ---------
+// --------- REGISTRO ---------
 export const register = async (req, res) => {
   const { username, email, password } = req.body;
 
   try {
-    // Validaciones básicas
     if (!username || !email || !password) {
-      return res
-        .status(400)
-        .json({ message: "Todos los campos son obligatorios." });
+      return res.status(400).json({ message: "Todos los campos son obligatorios." });
     }
 
     if (!isStrongPassword(password)) {
       return res.status(400).json({
-        message:
-          "La contraseña debe tener al menos 8 caracteres, una mayúscula, una minúscula y un número.",
+        message: "La contraseña debe tener al menos 8 caracteres, una mayúscula, una minúscula y un número.",
       });
     }
 
-    // Hash de contraseña
     const passwordHash = await bcrypt.hash(password, 12);
 
     const newUser = await prisma.user.create({
-      data: {
-        username,
-        email,
-        password: passwordHash,
-      },
+      data: { username, email, password: passwordHash },
     });
 
-    // Solo el ID en el token
-    const token = await createAccessToken({ id: newUser.id });
+    // Incluir datos en el token para no consultar BD en cada request
+    const token = createAccessToken({
+      id: newUser.id,
+      username: newUser.username,
+      email: newUser.email,
+    });
 
     res.cookie("token", token, authCookieOptions);
 
@@ -65,53 +55,45 @@ export const register = async (req, res) => {
       email: newUser.email,
     });
   } catch (error) {
-    console.error("Error en el registro:", error);
-
-    // P2002 = violación de clave única (username o email)
-    if (error.code === "P2002") {
-      return res
-        .status(409)
-        .json({ message: "El usuario o correo ya existe." });
+    if (process.env.NODE_ENV !== "production") {
+      console.error("Error en registro:", error);
     }
 
-    return res
-      .status(500)
-      .json({ message: "Error interno del servidor." });
+    if (error.code === "P2002") {
+      return res.status(409).json({ message: "El usuario o correo ya existe." });
+    }
+
+    return res.status(500).json({ message: "Error interno del servidor." });
   }
 };
 
-// --------- LOGIN DE USUARIO ---------
+// --------- LOGIN ---------
 export const login = async (req, res) => {
   const { email, password } = req.body;
 
   try {
-    // Validaciones básicas
     if (!email || !password) {
-      return res
-        .status(400)
-        .json({ message: "Correo y contraseña son obligatorios." });
+      return res.status(400).json({ message: "Correo y contraseña son obligatorios." });
     }
 
-    const userFound = await prisma.user.findUnique({
-      where: { email },
-    });
+    const userFound = await prisma.user.findUnique({ where: { email } });
 
-    // No revelamos si el correo existe o no
     if (!userFound) {
-      return res
-        .status(401)
-        .json({ message: "Credenciales inválidas." });
+      return res.status(401).json({ message: "Credenciales inválidas." });
     }
 
     const isMatch = await bcrypt.compare(password, userFound.password);
 
     if (!isMatch) {
-      return res
-        .status(401)
-        .json({ message: "Credenciales inválidas." });
+      return res.status(401).json({ message: "Credenciales inválidas." });
     }
 
-    const token = await createAccessToken({ id: userFound.id });
+    // Incluir datos en el token
+    const token = createAccessToken({
+      id: userFound.id,
+      username: userFound.username,
+      email: userFound.email,
+    });
 
     res.cookie("token", token, authCookieOptions);
 
@@ -121,19 +103,35 @@ export const login = async (req, res) => {
       email: userFound.email,
     });
   } catch (error) {
-    console.error("Error en el login:", error);
-    return res
-      .status(500)
-      .json({ message: "Error interno del servidor." });
+    if (process.env.NODE_ENV !== "production") {
+      console.error("Error en login:", error);
+    }
+    return res.status(500).json({ message: "Error interno del servidor." });
   }
 };
 
-// --------- LOGOUT DE USUARIO ---------
+// --------- LOGOUT ---------
 export const logout = (req, res) => {
+  const token = req.cookies?.token;
+
+  // Invalidar el token server-side
+  if (token) {
+    blacklistToken(token);
+  }
+
   res.cookie("token", "", {
     ...authCookieOptions,
     expires: new Date(0),
   });
 
   return res.sendStatus(200);
+};
+
+export const getMe = (req, res) => {
+  // req.user viene del authRequired middleware
+  return res.json({
+    id: req.user.id,
+    username: req.user.username,
+    email: req.user.email,
+  });
 };

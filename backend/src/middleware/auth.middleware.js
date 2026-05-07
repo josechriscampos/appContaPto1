@@ -1,6 +1,6 @@
-// src/middleware/auth.middleware.js
+// backend/src/middleware/auth.middleware.js
 import jwt from "jsonwebtoken";
-import { prisma } from "../db.js";
+import { isTokenBlacklisted } from "../libs/tokenBlacklist.js";
 
 export const authRequired = async (req, res, next) => {
   try {
@@ -10,32 +10,29 @@ export const authRequired = async (req, res, next) => {
       return res.status(401).json({ message: "No autorizado." });
     }
 
-    const decoded = jwt.verify(token, process.env.JWT_SECRET);
-
-    const userFound = await prisma.user.findUnique({
-      where: { id: decoded.id },
-      select: {
-        id: true,
-        username: true,
-        email: true,
-        // agrega más campos si los necesitas en req.user
-      },
-    });
-
-    if (!userFound) {
-      return res.status(401).json({ message: "No autorizado." });
+    // Verificar si el token fue invalidado por logout
+    if (isTokenBlacklisted(token)) {
+      return res.status(401).json({ message: "Sesión inválida." });
     }
 
-    req.user = userFound;
+    const decoded = jwt.verify(token, process.env.JWT_SECRET);
+
+    // Usamos los datos del token directamente, sin golpear la BD
+    req.user = {
+      id: decoded.id,
+      username: decoded.username,
+      email: decoded.email,
+    };
+
     return next();
   } catch (error) {
-    console.error("Error de token:", error.message);
+    // Solo mostrar errores en desarrollo
+    if (process.env.NODE_ENV !== "production") {
+      console.error("Error de token:", error.message);
+    }
 
     if (error.name === "TokenExpiredError") {
-      // token válido pero ya venció
-      return res
-        .status(401)
-        .json({ message: "Sesión expirada, vuelve a iniciar sesión." });
+      return res.status(401).json({ message: "Sesión expirada." });
     }
 
     return res.status(401).json({ message: "No autorizado." });

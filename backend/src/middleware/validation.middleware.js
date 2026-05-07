@@ -1,3 +1,4 @@
+// backend/src/middleware/validation.middleware.js
 import { validationResult } from "express-validator";
 
 export const validate = (req, res, next) => {
@@ -15,5 +16,5 @@ export const validate = (req, res, next) => {
     });
   }
 
-  next();
+  return next(); // ← agregado return para consistencia
 };
