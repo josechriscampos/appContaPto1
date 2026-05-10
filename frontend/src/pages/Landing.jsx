@@ -98,13 +98,18 @@ function FeatureCard({ icon, title, desc }) {
 function HeroButton({ onClick, children, variant }) {
   const [hovered, setHovered] = useState(false);
   const isPrimary = variant === "primary";
+
+  const bgColor = isPrimary
+    ? "white"
+    : hovered ? "rgba(255,255,255,0.1)" : "transparent";
+
   return (
     <button
       onClick={onClick}
       onMouseEnter={() => setHovered(true)}
       onMouseLeave={() => setHovered(false)}
       style={{
-        background: isPrimary ? "white" : "transparent",
+        background: bgColor,
         color: isPrimary ? "#00693E" : "white",
         border: isPrimary ? "none" : "2px solid rgba(255,255,255,0.4)",
         borderRadius: "12px",
@@ -117,8 +122,6 @@ function HeroButton({ onClick, children, variant }) {
           ? hovered ? "0 12px 30px rgba(0,0,0,0.2)" : "0 8px 25px rgba(0,0,0,0.15)"
           : "none",
         transform: hovered ? "translateY(-3px)" : "translateY(0)",
-        // eslint-disable-next-line no-dupe-keys
-        background: isPrimary ? "white" : hovered ? "rgba(255,255,255,0.1)" : "transparent",
       }}
     >
       {children}
@@ -203,10 +206,10 @@ function Landing() {
       {/* ── NAVBAR ── */}
       <nav style={{
         position: "fixed", top: 0, left: 0, right: 0, zIndex: 100,
-        padding: "14px 40px",
+        padding: "10px 40px",  // ✅ reducido de 14px a 10px
         display: "flex", alignItems: "center", justifyContent: "space-between",
-        background: scrolled ? "rgba(255,255,255,0.95)" : "transparent",
-        backdropFilter: scrolled ? "blur(10px)" : "none",
+        background: scrolled ? "rgba(255,255,255,0.95)" : "rgba(0,0,0,0.15)",
+        backdropFilter: "blur(10px)",
         boxShadow: scrolled ? "0 2px 20px rgba(0,0,0,0.08)" : "none",
         transition: "all 0.3s ease",
       }}>
@@ -219,20 +222,34 @@ function Landing() {
           }}>
             📒
           </div>
-          <span style={{ fontWeight: 700, fontSize: "1.2rem", color: "#00693E" }}>
+          {/* ✅ Blanco sobre hero verde, verde al hacer scroll */}
+          <span style={{
+            fontWeight: 700, fontSize: "1.2rem",
+            color: scrolled ? "#00693E" : "white",
+            transition: "color 0.3s ease",
+          }}>
             AppContable
           </span>
         </div>
         <div style={{ display: "flex", gap: "12px", alignItems: "center" }}>
+          {/* ✅ Links blancos sobre hero, grises al hacer scroll */}
           <a
             href="#features"
-            style={{ color: "#6c757d", textDecoration: "none", fontWeight: 500, fontSize: "0.9rem" }}
+            style={{
+              color: scrolled ? "#6c757d" : "rgba(255,255,255,0.9)",
+              textDecoration: "none", fontWeight: 500, fontSize: "0.9rem",
+              transition: "color 0.3s ease",
+            }}
           >
             Características
           </a>
           <a
             href="#about"
-            style={{ color: "#6c757d", textDecoration: "none", fontWeight: 500, fontSize: "0.9rem" }}
+            style={{
+              color: scrolled ? "#6c757d" : "rgba(255,255,255,0.9)",
+              textDecoration: "none", fontWeight: 500, fontSize: "0.9rem",
+              transition: "color 0.3s ease",
+            }}
           >
             Acerca de
           </a>
@@ -246,7 +263,8 @@ function Landing() {
         background: "linear-gradient(135deg, #00693E 0%, #004d2e 50%, #00875A 100%)",
         display: "flex", flexDirection: "column",
         alignItems: "center", justifyContent: "center",
-        textAlign: "center", padding: "80px 40px 80px",
+        textAlign: "center",
+        padding: "120px 40px 80px", // ✅ paddingTop 120px para no quedar bajo el navbar
         position: "relative", overflow: "hidden",
       }}>
         <div style={{
