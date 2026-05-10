@@ -21,7 +21,6 @@ import FinancialPosition from "./pages/FinancialPosition";
 import PendingAccounts from "./pages/PendingAccounts";
 import ChartOfAccounts from "./pages/ChartOfAccounts";
 import RecordsCalendarView from "./pages/RecordsCalendarView";
-import Settings from "./pages/Settings";
 
 // ✅ Ruta pública — redirige al dashboard si ya está autenticado
 const PublicRoute = ({ children }) => {
@@ -80,7 +79,6 @@ function App() {
                 <Route path="/cuentas-pendientes"     element={<PendingAccounts />} />
                 <Route path="/catalogo"               element={<ChartOfAccounts />} />
                 <Route path="/calendario"             element={<RecordsCalendarView />} />
-                <Route path="/configuracion"          element={<Settings />} />
               </Route>
             </Route>
 

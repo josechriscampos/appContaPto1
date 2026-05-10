@@ -49,8 +49,7 @@ function MainLayout() {
     <>
       <nav className="main-nav">
         <div className="nav-links">
-          <NavLink to="/" end>Inicio</NavLink>
-          <NavLink to="/calendario">Calendario</NavLink>
+          <NavLink to="/dashboard">Inicio</NavLink>          <NavLink to="/calendario">Calendario</NavLink>
           <NavLink to="/catalogo">Catálogo</NavLink>
           <NavLink to="/asientos">Asientos</NavLink>
           <NavLink to="/cuentas-t">Cuentas T</NavLink>
