@@ -49,9 +49,7 @@ function App() {
         <ToastProvider>
           <Routes>
             {/* ✅ Landing — pública */}
-            <Route path="/" element={
-              <PublicRoute><Landing /></PublicRoute>
-            } />
+            <Route path="/" element={<Landing />} />
 
             {/* ✅ Login — pública */}
             <Route path="/login" element={
