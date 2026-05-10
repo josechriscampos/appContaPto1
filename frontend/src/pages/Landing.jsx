@@ -246,7 +246,7 @@ function Landing() {
         background: "linear-gradient(135deg, #00693E 0%, #004d2e 50%, #00875A 100%)",
         display: "flex", flexDirection: "column",
         alignItems: "center", justifyContent: "center",
-        textAlign: "center", padding: "140px 20px 60px",
+        textAlign: "center", padding: "80px 20px 60px",
         position: "relative", overflow: "hidden",
       }}>
         <div style={{
