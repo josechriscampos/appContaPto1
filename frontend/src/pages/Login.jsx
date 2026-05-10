@@ -4,7 +4,6 @@ import { useNavigate } from "react-router-dom";
 // eslint-disable-next-line no-unused-vars
 import { motion, AnimatePresence } from "framer-motion";
 import { useAuth } from "../context/useAuth";
-import API from "../api/axios";
 
 const containerVariants = {
   hidden: { opacity: 0, y: 20 },
@@ -47,15 +46,15 @@ const LockIcon = (props) => (
 );
 
 function Login() {
-  const { login } = useAuth();
+  const { login, register } = useAuth(); // ✅ usa register del contexto
   const navigate = useNavigate();
 
   const [isRegister, setIsRegister] = useState(false);
-  const [username, setUsername] = useState("");
-  const [email, setEmail] = useState("");
-  const [password, setPassword] = useState("");
-  const [error, setError] = useState("");
-  const [success, setSuccess] = useState("");
+  const [username, setUsername]     = useState("");
+  const [email, setEmail]           = useState("");
+  const [password, setPassword]     = useState("");
+  const [error, setError]           = useState("");
+  const [success, setSuccess]       = useState("");
   const [submitting, setSubmitting] = useState(false);
 
   const handleSubmit = async (e) => {
@@ -66,21 +65,19 @@ function Login() {
 
     try {
       if (isRegister) {
-        await API.post("/register", { username, email, password });
+        // ✅ Usa register del contexto — CSRF garantizado
+        await register(username, email, password);
         setSuccess("¡Registro exitoso! Ahora inicia sesión.");
         setIsRegister(false);
         setPassword("");
       } else {
+        // ✅ Usa login del contexto — CSRF garantizado
         await login(email, password);
         navigate("/");
       }
     } catch (err) {
-      if (import.meta.env.DEV) {
-        console.error("Error en login/registro:", err);
-      }
-      setError(
-        err.response?.data?.message || "Ocurrió un error. Intenta de nuevo."
-      );
+      if (import.meta.env.DEV) console.error("Error en login/registro:", err);
+      setError(err.response?.data?.message || "Ocurrió un error. Intenta de nuevo.");
     } finally {
       setSubmitting(false);
     }
@@ -130,13 +127,9 @@ function Login() {
             </p>
 
             <form onSubmit={handleSubmit}>
-
-              {/* CAMPO USERNAME — solo en registro */}
               {isRegister && (
                 <div className="input-group">
-                  <label htmlFor="username" className="input-label">
-                    Nombre de Usuario
-                  </label>
+                  <label htmlFor="username" className="input-label">Nombre de Usuario</label>
                   <div className="input-wrapper">
                     <UserIcon className="input-icon" />
                     <input
@@ -150,18 +143,14 @@ function Login() {
                       disabled={submitting}
                     />
                   </div>
-                  {/* ✅ Mensaje de ayuda visible desde el inicio */}
                   <p className="input-hint">
                     Sin espacios. Puedes usar letras, números, guiones ( - ) y guiones bajos ( _ ).
                   </p>
                 </div>
               )}
 
-              {/* CAMPO EMAIL */}
               <div className="input-group">
-                <label htmlFor="email" className="input-label">
-                  Correo Electrónico
-                </label>
+                <label htmlFor="email" className="input-label">Correo Electrónico</label>
                 <div className="input-wrapper">
                   <MailIcon className="input-icon" />
                   <input
@@ -177,11 +166,8 @@ function Login() {
                 </div>
               </div>
 
-              {/* CAMPO CONTRASEÑA */}
               <div className="input-group">
-                <label htmlFor="password" className="input-label">
-                  Contraseña
-                </label>
+                <label htmlFor="password" className="input-label">Contraseña</label>
                 <div className="input-wrapper">
                   <LockIcon className="input-icon" />
                   <input
@@ -195,7 +181,6 @@ function Login() {
                     disabled={submitting}
                   />
                 </div>
-                {/* ✅ Mensaje de ayuda para contraseña — solo en registro */}
                 {isRegister && (
                   <p className="input-hint">
                     Mínimo 8 caracteres, una mayúscula, una minúscula y un número.
@@ -203,19 +188,13 @@ function Login() {
                 )}
               </div>
 
-              {error && <p className="error-message">{error}</p>}
+              {error   && <p className="error-message">{error}</p>}
               {success && <p className="success-message">{success}</p>}
 
-              <button
-                type="submit"
-                className="submit-button"
-                disabled={submitting}
-              >
+              <button type="submit" className="submit-button" disabled={submitting}>
                 {submitting
                   ? "Procesando..."
-                  : isRegister
-                  ? "Registrarse"
-                  : "Iniciar Sesión"}
+                  : isRegister ? "Registrarse" : "Iniciar Sesión"}
               </button>
             </form>
 

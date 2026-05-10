@@ -12,18 +12,16 @@ function BookDetail() {
   const { getBookRecords, incrementBookCount } = useBooks();
   const { showToast } = useToast();
 
-  const [book, setBook]               = useState(null);
-  const [records, setRecords]         = useState([]);
-  const [loading, setLoading]         = useState(true);
-  const [showNewRecord, setShowNewRecord] = useState(false);
-  const [confirmDeleteId, setConfirmDeleteId] = useState(null);
-
-  // Formulario nuevo registro
-  const [name, setName]                       = useState("");
-  const [date, setDate]                       = useState("");
-  const [description, setDescription]         = useState("");
+  const [book, setBook]                         = useState(null);
+  const [records, setRecords]                   = useState([]);
+  const [loading, setLoading]                   = useState(true);
+  const [showNewRecord, setShowNewRecord]       = useState(false);
+  const [confirmDeleteId, setConfirmDeleteId]   = useState(null);
+  const [name, setName]                         = useState("");
+  const [date, setDate]                         = useState("");
+  const [description, setDescription]           = useState("");
   const [selectedCurrency, setSelectedCurrency] = useState("CRC");
-  const [isCreating, setIsCreating]           = useState(false);
+  const [isCreating, setIsCreating]             = useState(false);
 
   const loadBook = useCallback(async () => {
     setLoading(true);
@@ -33,7 +31,7 @@ function BookDetail() {
       setRecords(data.records);
     } catch (err) {
       if (import.meta.env.DEV) console.error(err);
-      navigate("/");
+      navigate("/dashboard"); // ✅
     } finally {
       setLoading(false);
     }
@@ -47,9 +45,7 @@ function BookDetail() {
     setIsCreating(true);
     try {
       const newRecord = await addRecord({
-        name,
-        date,
-        description,
+        name, date, description,
         companyName: book?.companyName || null,
         companyId:   book?.companyId   || null,
         bookId: parseInt(id),
@@ -90,14 +86,12 @@ function BookDetail() {
 
   return (
     <div className="dashboard">
-
-      {/* ── Encabezado del libro ── */}
       <div className="dashboard-header">
         <div>
           <button
             className="secondary"
             style={{ marginBottom: "12px", padding: "6px 14px", fontSize: "0.85rem" }}
-            onClick={() => navigate("/")}
+            onClick={() => navigate("/dashboard")} // ✅
           >
             ← Mis Libros
           </button>
@@ -114,7 +108,6 @@ function BookDetail() {
         </button>
       </div>
 
-      {/* ── Formulario nuevo registro ── */}
       {showNewRecord && (
         <div className="book-form-card">
           <h3 style={{ marginBottom: "16px", textAlign: "left" }}>Nuevo Registro Contable</h3>
@@ -126,8 +119,7 @@ function BookDetail() {
                   value={name}
                   onChange={(e) => setName(e.target.value)}
                   placeholder="Ej: Enero 2026"
-                  required
-                  autoFocus
+                  required autoFocus
                 />
               </div>
               <div>
@@ -140,10 +132,7 @@ function BookDetail() {
               </div>
               <div>
                 <label className="settings-label">Moneda</label>
-                <select
-                  value={selectedCurrency}
-                  onChange={(e) => setSelectedCurrency(e.target.value)}
-                >
+                <select value={selectedCurrency} onChange={(e) => setSelectedCurrency(e.target.value)}>
                   <option value="CRC">Colón Costarricense (₡)</option>
                   <option value="USD">Dólar Estadounidense ($)</option>
                   <option value="EUR">Euro (€)</option>
@@ -159,12 +148,7 @@ function BookDetail() {
               </div>
             </div>
             <div className="button-group" style={{ marginTop: "16px" }}>
-              <button
-                type="button"
-                className="secondary"
-                onClick={() => setShowNewRecord(false)}
-                disabled={isCreating}
-              >
+              <button type="button" className="secondary" onClick={() => setShowNewRecord(false)} disabled={isCreating}>
                 Cancelar
               </button>
               <button type="submit" disabled={isCreating}>
@@ -175,7 +159,6 @@ function BookDetail() {
         </div>
       )}
 
-      {/* ── Confirmación eliminar registro ── */}
       {confirmDeleteId && (
         <div className="confirm-dialog">
           <p>¿Eliminar este registro y todos sus asientos? Esta acción es permanente.</p>
@@ -186,7 +169,6 @@ function BookDetail() {
         </div>
       )}
 
-      {/* ── Lista de registros del libro ── */}
       <div className="dashboard-records">
         <h2 className="dashboard-section-title">
           Registros — {records.length} {records.length === 1 ? "registro" : "registros"}
@@ -195,9 +177,7 @@ function BookDetail() {
         {records.length === 0 ? (
           <div className="dashboard-empty">
             <p>Este libro no tiene registros aún.</p>
-            <button onClick={() => setShowNewRecord(true)}>
-              + Crear primer registro
-            </button>
+            <button onClick={() => setShowNewRecord(true)}>+ Crear primer registro</button>
           </div>
         ) : (
           <div className="dashboard-records-list">
@@ -205,13 +185,8 @@ function BookDetail() {
               const entryCount = record._count?.entries ?? 0;
               return (
                 <div key={record.id} className="dashboard-record-item">
-                  <div
-                    className="dashboard-record-info"
-                    onClick={() => handleOpenRecord(record.id)}
-                  >
-                    <div className="dashboard-record-name">
-                      {record.name}
-                    </div>
+                  <div className="dashboard-record-info" onClick={() => handleOpenRecord(record.id)}>
+                    <div className="dashboard-record-name">{record.name}</div>
                     <div className="dashboard-record-meta">
                       {record.date
                         ? new Date(record.date).toLocaleDateString("es-CR", {
@@ -223,10 +198,7 @@ function BookDetail() {
                     </div>
                   </div>
                   <div className="dashboard-record-actions">
-                    <button
-                      onClick={() => handleOpenRecord(record.id)}
-                      className="dashboard-btn-open"
-                    >
+                    <button onClick={() => handleOpenRecord(record.id)} className="dashboard-btn-open">
                       Abrir
                     </button>
                     <button

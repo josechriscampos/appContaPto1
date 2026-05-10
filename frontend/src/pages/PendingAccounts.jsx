@@ -3,7 +3,7 @@ import { useNavigate } from "react-router-dom";
 import { useRecords } from "../context/useRecords";
 import { useChartOfAccounts } from "../context/useChartOfAccounts";
 import ReportHeader from "../components/ReportHeader";
-import PrintButton from "../components/PrintButton"; // ← nuevo
+import PrintButton from "../components/PrintButton";
 
 const toNumber = (value) => parseFloat(String(value)) || 0;
 
@@ -88,11 +88,7 @@ function PendingAccounts() {
 
   return (
     <div className="container container--narrow">
-      <ReportHeader
-        record={activeRecord}
-        title="Cuentas Pendientes"
-        periodLabel={periodLabel}
-      />
+      <ReportHeader record={activeRecord} title="Cuentas Pendientes" periodLabel={periodLabel} />
 
       <div className={`pending-summary ${hasPendings ? "pending-summary--alert" : "pending-summary--ok"}`}>
         {hasPendings ? (
@@ -118,7 +114,6 @@ function PendingAccounts() {
         const items = buildGroupItems(group.prefixes, group.nature);
         if (items.length === 0) return null;
         const groupTotal = items.reduce((s, i) => s + i.balance, 0);
-
         return (
           <div key={group.id} className={`pending-card pending-card--${group.alert}`}>
             <div className="pending-card__header">
@@ -162,8 +157,8 @@ function PendingAccounts() {
         <button className="secondary" onClick={() => navigate("/situacion-financiera")}>
           ← Situación Financiera
         </button>
-        <PrintButton /> {/* ← reemplaza el botón anterior */}
-        <button onClick={() => navigate("/")}>Ir al Dashboard →</button>
+        <PrintButton />
+        <button onClick={() => navigate("/dashboard")}>Ir al Dashboard →</button> {/* ✅ */}
       </div>
     </div>
   );
