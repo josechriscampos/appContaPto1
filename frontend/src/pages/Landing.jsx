@@ -421,6 +421,18 @@ function Landing() {
     return () => window.removeEventListener("scroll", fn);
   }, []);
 
+    // ✅ Quita el padding del body global para la landing
+  useEffect(() => {
+    document.body.style.padding = "0";
+    document.body.style.margin = "0";
+    document.body.style.overflow = "auto";
+    return () => {
+      document.body.style.padding = "";
+      document.body.style.margin = "";
+      document.body.style.overflow = "";
+    };
+  }, []);
+
   // Progress animation
   const startProgress = useCallback(() => {
     clearInterval(progRef.current);
