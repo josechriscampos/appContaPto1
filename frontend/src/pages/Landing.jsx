@@ -2,18 +2,7 @@
 import { useNavigate } from "react-router-dom";
 import { useState, useEffect, useRef, useCallback } from "react";
 
-// ── Google Fonts ──────────────────────────────────────────
 const FONT_LINK = "https://fonts.googleapis.com/css2?family=DM+Serif+Display:ital@0;1&family=DM+Sans:wght@300;400;500;600;700&display=swap";
-
-// ── Data ─────────────────────────────────────────────────
-const FEATURES = [
-  { icon: "📒", title: "Libros Contables",      desc: "Organiza la contabilidad de múltiples empresas cliente en libros separados. Cada libro contiene sus propios registros mensuales." },
-  { icon: "⚖️", title: "Asientos de Diario",    desc: "Registra débitos y créditos con validación automática de balance. Cálculo automático de IVA, intereses y comisiones con solo escribir el porcentaje." },
-  { icon: "📊", title: "Reportes Financieros",  desc: "Genera automáticamente Cuentas T, Balanza de Comprobación, Estado de Resultados y Estado de Situación Financiera." },
-  { icon: "⚠️", title: "Cuentas Pendientes",   desc: "Identifica de forma inmediata cuentas por pagar, por cobrar e impuestos pendientes de declarar." },
-  { icon: "🔒", title: "Seguridad Avanzada",    desc: "Protección CSRF, tokens JWT, rate limiting y aislamiento total de datos entre usuarios. Tu información siempre segura." },
-  { icon: "🖨️", title: "Exportar a PDF",        desc: "Imprime o exporta cualquier reporte a PDF con encabezado formal, nombre de empresa y fecha de generación." },
-];
 
 const STATS = [
   { value: "∞",    label: "Empresas cliente sin límite" },
@@ -23,14 +12,54 @@ const STATS = [
 ];
 
 const DEMO_STEPS = [
-  { num: 1, title: "Crea tu cuenta",                  desc: "Registro en 30 segundos. Sin formularios interminables." },
-  { num: 2, title: "Un libro por empresa cliente",    desc: "Crea un libro para cada empresa. Todos los períodos organizados ahí." },
-  { num: 3, title: "Registra asientos con auto-balance", desc: "El IVA se calcula solo con '13%'. El balance se verifica al instante." },
-  { num: 4, title: "Cuentas T generadas solas",       desc: "Visualiza el movimiento de cada cuenta de forma automática." },
-  { num: 5, title: "Balanza de Comprobación",         desc: "Verificación automática de que el registro cuadra correctamente." },
-  { num: 6, title: "Estado de Resultados",            desc: "Ingresos, costos y utilidad neta del período — en segundos." },
-  { num: 7, title: "Situación Financiera",            desc: "Balance general con activos, pasivos y capital contable." },
-  { num: 8, title: "Cuentas Pendientes",              desc: "IVA, facturas por pagar y por cobrar — todo detectado automáticamente." },
+  {
+    num: 1,
+    title: "Crea tu cuenta en 30 segundos",
+    desc: "Registro simple con nombre de usuario, correo y contraseña. Sin formularios interminables, sin tarjeta de crédito. En menos de un minuto ya estás dentro de la app.",
+    detail: "Acceso inmediato · 7 días gratis · Sin compromisos",
+  },
+  {
+    num: 2,
+    title: "Un libro contable por empresa cliente",
+    desc: "Crea un libro separado para cada empresa que manejas. Cada libro tiene su propio catálogo de cuentas, sus registros mensuales y su historial completo. Nunca más confundirás datos de un cliente con otro.",
+    detail: "Libros ilimitados · Todo organizado · Datos 100% aislados",
+  },
+  {
+    num: 3,
+    title: "Registra asientos con auto-balance",
+    desc: "Selecciona la cuenta del catálogo, escribe el monto. El sistema verifica el balance Debe/Haber en tiempo real. Para IVA, intereses o comisiones escribe el porcentaje (ej: 13%) y el monto se calcula automáticamente.",
+    detail: "Auto-balance en tiempo real · IVA 13% automático · Guardado incremental",
+  },
+  {
+    num: 4,
+    title: "Cuentas T generadas automáticamente",
+    desc: "Al terminar de registrar tus asientos, las Cuentas T se construyen solas. Cada cuenta muestra sus movimientos de débito y crédito, el total y el saldo final. Sin copiar, sin calcular, sin riesgo de error.",
+    detail: "Sin cálculo manual · Todas las cuentas · Saldo automático",
+  },
+  {
+    num: 5,
+    title: "Balanza de Comprobación instantánea",
+    desc: "La Balanza de Comprobación se genera al instante con todas las cuentas y sus saldos. El sistema verifica que el total Debe sea igual al total Haber y te muestra la confirmación. Si hay error, lo detectas de inmediato.",
+    detail: "Verificación automática · Alerta si no cuadra · Lista para imprimir",
+  },
+  {
+    num: 6,
+    title: "Estado de Resultados en segundos",
+    desc: "Con un clic generas el Estado de Resultados completo: ingresos operativos, costo de ventas, utilidad bruta, gastos operativos y utilidad neta del período. Todo calculado automáticamente a partir de tus asientos.",
+    detail: "Ventas · Costos · Gastos · Utilidad neta",
+  },
+  {
+    num: 7,
+    title: "Estado de Situación Financiera",
+    desc: "El balance general se genera automáticamente mostrando activos, pasivos y capital contable. El sistema verifica que el estado cuadre correctamente. Incluye encabezado formal con nombre de empresa y fecha de corte.",
+    detail: "Activos · Pasivos · Capital · Verificación automática",
+  },
+  {
+    num: 8,
+    title: "Panel de Cuentas Pendientes",
+    desc: "El sistema detecta automáticamente qué facturas están pendientes de cobro, qué deudas están sin pagar y qué impuestos (como el IVA) están pendientes de declarar. Todo en un solo panel, sin buscar manualmente.",
+    detail: "Por cobrar · Por pagar · Impuestos por declarar",
+  },
 ];
 
 const EARLY_PERKS = [
@@ -82,83 +111,7 @@ const FAQ_ITEMS = [
   },
 ];
 
-// ── Styles ────────────────────────────────────────────────
-const S = {
-  // Colors
-  g900: "#003d24", g800: "#00693E", g700: "#00875A",
-  g100: "#d1fae5", g50:  "#f0fdf4",
-  dark: "#0a0f0d", gray900: "#1a1a2e", gray700: "#374151",
-  gray500: "#6b7280", gray300: "#d1d5db", gray100: "#f3f4f6",
-  white: "#ffffff",
-
-  // Section wrapper
-  section: (bg) => ({ padding: "100px 24px", background: bg || "#fff" }),
-  inner:   (mw) => ({ maxWidth: mw || 1100, margin: "0 auto" }),
-
-  tag: {
-    display: "inline-flex", alignItems: "center",
-    background: "#f0fdf4", color: "#00693E",
-    border: "1px solid #d1fae5", borderRadius: "50px",
-    padding: "6px 16px", fontSize: "0.8rem", fontWeight: 600,
-    letterSpacing: "0.4px", textTransform: "uppercase", marginBottom: "20px",
-  },
-  h2: { fontFamily: "'DM Serif Display', serif", fontSize: "clamp(1.9rem, 3.5vw, 2.7rem)", lineHeight: 1.15, marginBottom: "14px" },
-  sub: { color: "#6b7280", fontSize: "1rem", lineHeight: 1.7, maxWidth: 520 },
-};
-
-// ── Sub-components ────────────────────────────────────────
-function FeatureCard({ icon, title, desc }) {
-  const [hov, setHov] = useState(false);
-  return (
-    <div
-      onMouseEnter={() => setHov(true)}
-      onMouseLeave={() => setHov(false)}
-      style={{
-        background: "#fff", borderRadius: 16, padding: 28,
-        boxShadow: hov ? "0 12px 30px rgba(0,105,62,0.12)" : "0 4px 20px rgba(0,0,0,0.06)",
-        border: hov ? "1px solid #00875A" : "1px solid #e9ecef",
-        transform: hov ? "translateY(-4px)" : "translateY(0)",
-        transition: "all 0.3s ease", cursor: "default",
-      }}
-    >
-      <div style={{ fontSize: "2.2rem", marginBottom: 14 }}>{icon}</div>
-      <h3 style={{ fontSize: "1rem", fontWeight: 700, marginBottom: 8, color: "#0a0f0d" }}>{title}</h3>
-      <p style={{ color: "#6b7280", fontSize: "0.88rem", lineHeight: 1.7, margin: 0 }}>{desc}</p>
-    </div>
-  );
-}
-
-function FaqItem({ q, a }) {
-  const [open, setOpen] = useState(false);
-  return (
-    <div style={{ borderBottom: "1px solid #d1d5db", overflow: "hidden" }}>
-      <button
-        onClick={() => setOpen(!open)}
-        style={{
-          width: "100%", display: "flex", justifyContent: "space-between",
-          alignItems: "center", padding: "18px 0", background: "none", border: "none",
-          fontFamily: "'DM Sans', sans-serif", fontSize: "0.93rem", fontWeight: 600,
-          color: open ? "#00693E" : "#0a0f0d", cursor: "pointer", textAlign: "left", gap: 16,
-          transition: "color 0.2s",
-        }}
-      >
-        {q}
-        <span style={{
-          width: 26, height: 26, borderRadius: "50%",
-          background: open ? "#d1fae5" : "#f3f4f6",
-          display: "flex", alignItems: "center", justifyContent: "center",
-          flexShrink: 0, fontSize: "0.7rem", color: open ? "#00693E" : "#6b7280",
-          transform: open ? "rotate(180deg)" : "rotate(0deg)", transition: "all 0.3s ease",
-        }}>▼</span>
-      </button>
-      <div style={{ maxHeight: open ? 200 : 0, overflow: "hidden", transition: "max-height 0.4s ease" }}>
-        <p style={{ padding: "0 0 18px", fontSize: "0.88rem", color: "#6b7280", lineHeight: 1.75 }}>{a}</p>
-      </div>
-    </div>
-  );
-}
-
-// ── Demo panels ───────────────────────────────────────────
+// ── Demo panels ──────────────────────────────────────────
 function DemoPanel0() {
   return (
     <div style={{ background: "#fff", borderRadius: 10, padding: 20, boxShadow: "0 2px 10px rgba(0,0,0,0.06)" }}>
@@ -166,38 +119,34 @@ function DemoPanel0() {
       {[["Nombre de usuario","christian_conta","text"],["Correo electrónico","christian@miestudio.cr","email"],["Contraseña","••••••••","password"]].map(([label, val, type]) => (
         <div key={label} style={{ marginBottom: 12 }}>
           <label style={{ display: "block", fontSize: "0.72rem", fontWeight: 600, color: "#374151", marginBottom: 4 }}>{label}</label>
-          <input type={type} readOnly value={val} style={{ width: "100%", padding: "8px 10px", borderRadius: 7, border: "1.5px solid #00875A", fontSize: "0.82rem", background: "#fff" }} />
+          <input type={type} readOnly value={val} style={{ width: "100%", padding: "8px 10px", borderRadius: 7, border: "1.5px solid #00875A", fontSize: "0.82rem", background: "#fff", boxSizing: "border-box" }} />
         </div>
       ))}
-      <button style={{ width: "100%", padding: 10, borderRadius: 8, background: "linear-gradient(135deg,#00693E,#00875A)", color: "#fff", fontWeight: 700, fontSize: "0.88rem", border: "none", marginTop: 6 }}>
+      <button style={{ width: "100%", padding: 10, borderRadius: 8, background: "linear-gradient(135deg,#00693E,#00875A)", color: "#fff", fontWeight: 700, fontSize: "0.88rem", border: "none", marginTop: 6, cursor: "pointer" }}>
         ✓ Crear cuenta — Gratis
       </button>
-      <div style={{ textAlign: "center", marginTop: 8, fontSize: "0.68rem", color: "#6b7280" }}>Sin tarjeta · 7 días gratis</div>
+      <div style={{ textAlign: "center", marginTop: 8, fontSize: "0.68rem", color: "#6b7280" }}>Sin tarjeta · 7 días gratis · Cancela cuando quieras</div>
     </div>
   );
 }
 
 function DemoPanel1() {
-  const book = (name, ced, n, dim) => (
-    <div key={name} style={{ background: "#fff", borderRadius: 10, padding: 14, boxShadow: "0 2px 10px rgba(0,0,0,0.06)", marginBottom: 10, borderLeft: `3px solid ${dim ? "#9ca3af" : "#00693E"}`, opacity: dim ? 0.55 : 1 }}>
-      <div style={{ fontWeight: 700, fontSize: "0.88rem" }}>📒 {name}</div>
-      <div style={{ fontSize: "0.72rem", color: "#6b7280" }}>Cédula: {ced} · {n} registros</div>
-    </div>
-  );
-  const rec = (name, meta, dim) => (
-    <div key={name} style={{ background: "#fff", borderRadius: 7, padding: "10px 13px", display: "flex", alignItems: "center", justifyContent: "space-between", border: "1px solid #d1d5db", marginBottom: 7, opacity: dim ? 0.5 : 1 }}>
-      <div><div style={{ fontWeight: 600, fontSize: "0.82rem" }}>{name}</div><div style={{ fontSize: "0.7rem", color: "#6b7280" }}>{meta}</div></div>
-      <button style={{ background: "#00693E", color: "#fff", padding: "4px 12px", borderRadius: 5, fontSize: "0.75rem", fontWeight: 600, border: "none" }}>Abrir</button>
-    </div>
-  );
   return (
     <div>
       <div style={{ fontWeight: 700, fontSize: "0.82rem", color: "#374151", marginBottom: 8 }}>📒 Mis Libros Contables</div>
-      {book("El Fogón Tico S.A.","57382927111",2,false)}
-      {book("Distribuidora Méndez Ltda.","3-102-456789",1,true)}
-      <div style={{ fontWeight: 700, fontSize: "0.82rem", color: "#374151", margin: "12px 0 8px" }}>Registros del libro:</div>
-      {rec("Enero 2026","31 dic 2025 · 40 asientos",false)}
-      {rec("Febrero 2026","28 feb 2026 · 35 asientos",true)}
+      {[
+        { name: "El Fogón Tico S.A.", ced: "57382927111", n: 3, dim: false },
+        { name: "Distribuidora Méndez Ltda.", ced: "3-102-456789", n: 1, dim: true },
+        { name: "Reparaciones Martínez", ced: "123345566", n: 0, dim: true },
+      ].map((b) => (
+        <div key={b.name} style={{ background: "#fff", borderRadius: 10, padding: 14, boxShadow: "0 2px 10px rgba(0,0,0,0.06)", marginBottom: 10, borderLeft: `3px solid ${b.dim ? "#9ca3af" : "#00693E"}`, opacity: b.dim ? 0.55 : 1 }}>
+          <div style={{ fontWeight: 700, fontSize: "0.88rem" }}>📒 {b.name}</div>
+          <div style={{ fontSize: "0.72rem", color: "#6b7280" }}>Cédula: {b.ced} · {b.n} registros</div>
+        </div>
+      ))}
+      <div style={{ display: "flex", justifyContent: "flex-end" }}>
+        <div style={{ background: "#00693E", color: "#fff", fontSize: "0.75rem", fontWeight: 700, padding: "7px 14px", borderRadius: 7 }}>+ Nuevo Libro</div>
+      </div>
     </div>
   );
 }
@@ -312,8 +261,7 @@ function DemoPanel5() {
           padding: r.isSection ? "5px 8px" : "4px 8px",
           background: r.total ? "#00693E" : r.sub ? "#f0fdf4" : r.isSection ? "#f3f4f6" : "#fff",
           color: r.total ? "#fff" : r.sub ? "#00693E" : "#0a0f0d",
-          fontWeight: r.total || r.sub ? 700 : 400,
-          fontSize: r.isSection ? "0.72rem" : "0.72rem",
+          fontWeight: r.total || r.sub ? 700 : 400, fontSize: "0.72rem",
           borderBottom: "1px solid #f3f4f6",
           borderRadius: r.total ? 6 : 0, marginTop: r.total ? 6 : 0,
         }}>
@@ -326,10 +274,10 @@ function DemoPanel5() {
 }
 
 function DemoPanel6() {
-  const sfSec  = (t) => <div style={{ background: "#00693E", color: "#fff", padding: "4px 8px", borderRadius: 4, marginBottom: 4, fontSize: "0.68rem", fontWeight: 700 }}>{t}</div>;
-  const sfRow  = (l, v) => <div style={{ display: "flex", justifyContent: "space-between", padding: "4px 8px", fontSize: "0.7rem", borderBottom: "1px solid #f3f4f6" }}><span>{l}</span><span>{v}</span></div>;
-  const sfSub  = (l, v) => <div style={{ display: "flex", justifyContent: "space-between", padding: "5px 8px", fontSize: "0.72rem", fontWeight: 700, color: "#00693E", background: "#f0fdf4", borderRadius: 4, margin: "3px 0" }}><span>{l}</span><span>{v}</span></div>;
-  const sfTot  = (l, v) => <div style={{ display: "flex", justifyContent: "space-between", padding: "7px 10px", fontSize: "0.75rem", fontWeight: 800, background: "#00693E", color: "#fff", borderRadius: 6, marginTop: 4 }}><span>{l}</span><span>{v}</span></div>;
+  const sfSec = (t) => <div style={{ background: "#00693E", color: "#fff", padding: "4px 8px", borderRadius: 4, marginBottom: 4, fontSize: "0.68rem", fontWeight: 700 }}>{t}</div>;
+  const sfRow = (l, v) => <div style={{ display: "flex", justifyContent: "space-between", padding: "4px 8px", fontSize: "0.7rem", borderBottom: "1px solid #f3f4f6" }}><span>{l}</span><span>{v}</span></div>;
+  const sfSub = (l, v) => <div style={{ display: "flex", justifyContent: "space-between", padding: "5px 8px", fontSize: "0.72rem", fontWeight: 700, color: "#00693E", background: "#f0fdf4", borderRadius: 4, margin: "3px 0" }}><span>{l}</span><span>{v}</span></div>;
+  const sfTot = (l, v) => <div style={{ display: "flex", justifyContent: "space-between", padding: "7px 10px", fontSize: "0.75rem", fontWeight: 800, background: "#00693E", color: "#fff", borderRadius: 6, marginTop: 4 }}><span>{l}</span><span>{v}</span></div>;
   return (
     <div>
       <div style={{ fontFamily: "'DM Serif Display', serif", fontSize: "0.95rem", textAlign: "center", marginBottom: 10 }}>Estado de Situación Financiera</div>
@@ -371,8 +319,8 @@ function DemoPanel7() {
         </div>
       </div>
       {[
-        { title: "📤 Pendientes de Pago", total: "₡480.000", color: "#dc3545", rows: [["2.1.1.1 Proveedores", "₡480.000"]] },
-        { title: "🧾 Impuestos Pendientes", total: "₡1.653.950", color: "#3b82f6", rows: [["2.1.2.2 IVA por Pagar", "₡1.653.950"]] },
+        { title: "📤 Pendientes de Pago", total: "₡480.000", color: "#dc3545", rows: [["2.1.1.1 Proveedores","₡480.000"]] },
+        { title: "🧾 Impuestos Pendientes", total: "₡1.653.950", color: "#3b82f6", rows: [["2.1.2.2 IVA por Pagar","₡1.653.950"]] },
       ].map((g) => (
         <div key={g.title} style={{ borderRadius: 8, border: "1px solid #d1d5db", overflow: "hidden", marginBottom: 8, borderLeft: `3px solid ${g.color}` }}>
           <div style={{ background: "#f3f4f6", padding: "8px 10px", display: "flex", justifyContent: "space-between", alignItems: "center", borderBottom: "1px solid #d1d5db" }}>
@@ -394,16 +342,64 @@ function DemoPanel7() {
 }
 
 const PANELS = [DemoPanel0, DemoPanel1, DemoPanel2, DemoPanel3, DemoPanel4, DemoPanel5, DemoPanel6, DemoPanel7];
-const DURATION = 2500;
+const DURATION = 3000;
 
-// ── Main component ────────────────────────────────────────
+// ── Feature card (dark bg) ───────────────────────────────
+function FeatureCard({ icon, title, desc }) {
+  const [hov, setHov] = useState(false);
+  return (
+    <div onMouseEnter={() => setHov(true)} onMouseLeave={() => setHov(false)}
+      style={{
+        background: hov ? "rgba(0,105,62,0.15)" : "rgba(255,255,255,0.04)",
+        borderRadius: 16, padding: 28, cursor: "default",
+        border: hov ? "1px solid rgba(0,135,90,0.5)" : "1px solid rgba(255,255,255,0.08)",
+        transform: hov ? "translateY(-5px)" : "translateY(0)",
+        transition: "all 0.3s cubic-bezier(0.34,1.56,0.64,1)",
+        position: "relative", overflow: "hidden",
+      }}
+    >
+      {hov && <div style={{ position: "absolute", inset: 0, background: "radial-gradient(circle at 50% 0%,rgba(0,135,90,0.18) 0%,transparent 60%)", pointerEvents: "none" }} />}
+      <div style={{ fontSize: "2.2rem", marginBottom: 14 }}>{icon}</div>
+      <h3 style={{ fontSize: "1rem", fontWeight: 700, marginBottom: 8, color: "#fff" }}>{title}</h3>
+      <p style={{ color: "rgba(255,255,255,0.55)", fontSize: "0.88rem", lineHeight: 1.7, margin: 0 }}>{desc}</p>
+    </div>
+  );
+}
+
+// ── FAQ item (dark bg) ───────────────────────────────────
+function FaqItem({ q, a }) {
+  const [open, setOpen] = useState(false);
+  return (
+    <div style={{ borderRadius: 12, overflow: "hidden", marginBottom: 12, border: "1px solid rgba(255,255,255,0.08)", background: "rgba(255,255,255,0.02)" }}>
+      <button onClick={() => setOpen(!open)}
+        style={{ width: "100%", display: "flex", justifyContent: "space-between", alignItems: "center", padding: "18px 20px", background: "none", border: "none", fontFamily: "'DM Sans',sans-serif", fontSize: "0.93rem", fontWeight: 600, color: open ? "#86efac" : "rgba(255,255,255,0.9)", cursor: "pointer", textAlign: "left", gap: 16, transition: "color 0.2s" }}>
+        {q}
+        <span style={{ width: 26, height: 26, borderRadius: "50%", background: open ? "rgba(0,135,90,0.3)" : "rgba(255,255,255,0.08)", display: "flex", alignItems: "center", justifyContent: "center", flexShrink: 0, fontSize: "0.7rem", color: open ? "#86efac" : "rgba(255,255,255,0.5)", transform: open ? "rotate(180deg)" : "rotate(0deg)", transition: "all 0.3s ease" }}>▼</span>
+      </button>
+      <div style={{ maxHeight: open ? 300 : 0, overflow: "hidden", transition: "max-height 0.4s ease" }}>
+        <p style={{ padding: "0 20px 18px", fontSize: "0.88rem", color: "rgba(255,255,255,0.55)", lineHeight: 1.75 }}>{a}</p>
+      </div>
+    </div>
+  );
+}
+
+// ── Floating number particles ────────────────────────────
+function FloatingNumber({ value, x, y, delay, duration }) {
+  return (
+    <div style={{ position: "absolute", left: `${x}%`, top: `${y}%`, color: "rgba(134,239,172,0.35)", animation: `floatUp ${duration}s ${delay}s ease-in-out infinite`, fontSize: "0.68rem", fontFamily: "monospace", fontWeight: 700, pointerEvents: "none", userSelect: "none" }}>
+      {value}
+    </div>
+  );
+}
+
+// ── Main component ───────────────────────────────────────
 function Landing() {
   const navigate = useNavigate();
-  const [scrolled, setScrolled]     = useState(false);
-  const [demoIdx,  setDemoIdx]      = useState(0);
-  const [progress, setProgress]     = useState(0);
-  const timerRef   = useRef(null);
-  const progRef    = useRef(null);
+  const [scrolled, setScrolled] = useState(false);
+  const [demoIdx,  setDemoIdx]  = useState(0);
+  const [progress, setProgress] = useState(0);
+  const timerRef = useRef(null);
+  const progRef  = useRef(null);
 
   // Load fonts
   useEffect(() => {
@@ -414,6 +410,20 @@ function Landing() {
     }
   }, []);
 
+  // Remove global body padding
+  useEffect(() => {
+    document.body.style.padding = "0";
+    document.body.style.margin  = "0";
+    document.body.style.overflow = "auto";
+    document.body.style.background = "#030b06";
+    return () => {
+      document.body.style.padding = "";
+      document.body.style.margin  = "";
+      document.body.style.overflow = "";
+      document.body.style.background = "";
+    };
+  }, []);
+
   // Scroll
   useEffect(() => {
     const fn = () => setScrolled(window.scrollY > 60);
@@ -421,26 +431,13 @@ function Landing() {
     return () => window.removeEventListener("scroll", fn);
   }, []);
 
-    // ✅ Quita el padding del body global para la landing
-  useEffect(() => {
-    document.body.style.padding = "0";
-    document.body.style.margin = "0";
-    document.body.style.overflow = "auto";
-    return () => {
-      document.body.style.padding = "";
-      document.body.style.margin = "";
-      document.body.style.overflow = "";
-    };
-  }, []);
-
-  // Progress animation
+  // Progress bar
   const startProgress = useCallback(() => {
     clearInterval(progRef.current);
     setProgress(0);
     const start = Date.now();
     progRef.current = setInterval(() => {
-      const elapsed = Date.now() - start;
-      const pct = Math.min((elapsed / DURATION) * 100, 100);
+      const pct = Math.min(((Date.now() - start) / DURATION) * 100, 100);
       setProgress(pct);
       if (pct >= 100) clearInterval(progRef.current);
     }, 30);
@@ -452,13 +449,13 @@ function Landing() {
     timerRef.current = setTimeout(() => {
       const next = (from + 1) % PANELS.length;
       setDemoIdx(next);
-      startProgress(next);
+      startProgress();
       scheduleNext(next);
     }, DURATION);
   }, [startProgress]);
 
   useEffect(() => {
-    startProgress(0);
+    startProgress();
     scheduleNext(0);
     return () => { clearTimeout(timerRef.current); clearInterval(progRef.current); };
   }, [scheduleNext, startProgress]);
@@ -467,151 +464,217 @@ function Landing() {
     clearTimeout(timerRef.current);
     clearInterval(progRef.current);
     setDemoIdx(i);
-    startProgress(i);
+    startProgress();
     scheduleNext(i);
   };
 
   const ActivePanel = PANELS[demoIdx];
 
-  return (
-    <div style={{ fontFamily: "'DM Sans', sans-serif", color: "#0a0f0d", overflowX: "hidden" }}>
+  const floatingNums = [
+    { value: "₡23.3M", x: 7,  y: 18, delay: 0,   duration: 6 },
+    { value: "13%",    x: 86, y: 22, delay: 1,   duration: 7 },
+    { value: "✅",     x: 11, y: 65, delay: 2,   duration: 5 },
+    { value: "DEBE",   x: 4,  y: 82, delay: 1.5, duration: 6 },
+    { value: "HABER",  x: 88, y: 44, delay: 2.5, duration: 7 },
+    { value: "IVA 13%",x: 71, y: 10, delay: 3,   duration: 6 },
+  ];
 
-      {/* NAVBAR */}
+  // Shared section tag style
+  const sectionTag = {
+    display: "inline-block", padding: "6px 16px", borderRadius: "50px",
+    fontSize: "0.8rem", fontWeight: 600, letterSpacing: "0.4px", textTransform: "uppercase",
+    marginBottom: "20px", background: "rgba(0,135,90,0.15)", color: "#86efac",
+    border: "1px solid rgba(0,135,90,0.25)",
+  };
+
+  return (
+    <div style={{ fontFamily: "'DM Sans', sans-serif", color: "#fff", overflowX: "hidden", background: "#030b06" }}>
+      <style>{`
+        @keyframes floatUp { 0%{opacity:0;transform:translateY(20px)} 20%{opacity:1} 80%{opacity:1} 100%{opacity:0;transform:translateY(-40px)} }
+        @keyframes glow { 0%,100%{box-shadow:0 0 20px rgba(0,135,90,0.3)} 50%{box-shadow:0 0 40px rgba(0,135,90,0.6)} }
+        @keyframes shimmer { 0%{background-position:-200% center} 100%{background-position:200% center} }
+        @keyframes fadeInUp { from{opacity:0;transform:translateY(28px)} to{opacity:1;transform:translateY(0)} }
+        @keyframes rotateGlow { 0%{transform:translate(-50%,-50%) rotate(0deg)} 100%{transform:translate(-50%,-50%) rotate(360deg)} }
+        @keyframes pulseDot { 0%,100%{transform:scale(1);opacity:1} 50%{transform:scale(1.4);opacity:0.7} }
+        @keyframes panelIn { from{opacity:0;transform:translateY(6px)} to{opacity:1;transform:translateY(0)} }
+        .shimmer-text { background:linear-gradient(90deg,#86efac 0%,#fff 40%,#86efac 80%,#fff 100%); background-size:200% auto; -webkit-background-clip:text; -webkit-text-fill-color:transparent; background-clip:text; animation:shimmer 4s linear infinite; }
+        .f0{animation:fadeInUp 0.9s ease both}
+        .f1{animation:fadeInUp 0.9s 0.1s ease both}
+        .f2{animation:fadeInUp 0.9s 0.2s ease both}
+        .f3{animation:fadeInUp 0.9s 0.35s ease both}
+        .f4{animation:fadeInUp 0.9s 0.5s ease both}
+        .green-glow { animation: glow 3s ease-in-out infinite; }
+        ::-webkit-scrollbar{width:5px}
+        ::-webkit-scrollbar-track{background:#030b06}
+        ::-webkit-scrollbar-thumb{background:rgba(0,135,90,0.45);border-radius:3px}
+      `}</style>
+
+      {/* ── NAVBAR ── */}
       <nav style={{
         position: "fixed", top: 0, left: 0, right: 0, zIndex: 1000,
-        padding: scrolled ? "10px 48px" : "14px 48px",
+        padding: scrolled ? "10px 48px" : "15px 48px",
         display: "flex", alignItems: "center", justifyContent: "space-between",
-        background: scrolled ? "rgba(255,255,255,0.96)" : "rgba(0,0,0,0.15)",
+        background: scrolled ? "rgba(3,11,6,0.94)" : "transparent",
         backdropFilter: "blur(12px)",
-        boxShadow: scrolled ? "0 1px 0 rgba(0,0,0,0.08)" : "none",
+        boxShadow: scrolled ? "0 1px 0 rgba(0,135,90,0.18)" : "none",
         transition: "all 0.3s ease",
       }}>
         <div style={{ display: "flex", alignItems: "center", gap: 10 }}>
-          <div style={{ width: 36, height: 36, borderRadius: 10, background: "linear-gradient(135deg,#00693E,#00875A)", display: "flex", alignItems: "center", justifyContent: "center", fontSize: 18 }}>📒</div>
-          <span style={{ fontWeight: 700, fontSize: "1.15rem", color: scrolled ? "#00693E" : "#fff", transition: "color 0.3s" }}>AppContable</span>
+          <div style={{ width: 36, height: 36, borderRadius: 10, background: "linear-gradient(135deg,#00693E,#00875A)", display: "flex", alignItems: "center", justifyContent: "center", fontSize: 18, boxShadow: "0 0 16px rgba(0,135,90,0.4)" }}>📒</div>
+          <span style={{ fontWeight: 700, fontSize: "1.15rem", color: "#fff", transition: "color 0.3s" }}>AppContable</span>
         </div>
         <div style={{ display: "flex", gap: 28, alignItems: "center" }}>
           {[["#problemas","El problema"],["#demo","Cómo funciona"],["#precio","Precio"],["#faq","FAQ"]].map(([href, label]) => (
-            <a key={href} href={href} style={{ color: scrolled ? "#6b7280" : "rgba(255,255,255,0.85)", textDecoration: "none", fontWeight: 500, fontSize: "0.88rem", transition: "color 0.3s" }}>{label}</a>
+            <a key={href} href={href} style={{ color: "rgba(255,255,255,0.6)", textDecoration: "none", fontWeight: 500, fontSize: "0.88rem", transition: "color 0.3s" }}
+              onMouseEnter={(e) => e.target.style.color = "#86efac"}
+              onMouseLeave={(e) => e.target.style.color = "rgba(255,255,255,0.6)"}>
+              {label}
+            </a>
           ))}
-          <button onClick={() => navigate("/login")} style={{ background: scrolled ? "#00693E" : "#fff", color: scrolled ? "#fff" : "#00693E", border: "none", borderRadius: 8, padding: "8px 20px", fontWeight: 700, fontSize: "0.88rem", cursor: "pointer", transition: "all 0.2s ease" }}>
+          <button onClick={() => navigate("/login")}
+            style={{ background: "linear-gradient(135deg,#00693E,#00875A)", color: "#fff", border: "none", borderRadius: 8, padding: "8px 20px", fontWeight: 700, fontSize: "0.88rem", cursor: "pointer", boxShadow: "0 0 16px rgba(0,105,62,0.4)", transition: "all 0.2s ease" }}>
             Iniciar Sesión →
           </button>
         </div>
       </nav>
 
-      {/* HERO */}
-      <section style={{ minHeight: "100vh", background: "linear-gradient(160deg,#003d24 0%,#00693E 45%,#005c38 100%)", display: "flex", alignItems: "center", justifyContent: "center", textAlign: "center", padding: "130px 24px 80px", position: "relative", overflow: "hidden" }}>
+      {/* ── HERO ── */}
+      <section style={{ minHeight: "100vh", background: "linear-gradient(160deg,#003d24 0%,#00693E 45%,#005c38 100%)", display: "flex", flexDirection: "column", alignItems: "center", justifyContent: "center", textAlign: "center", padding: "130px 24px 80px", position: "relative", overflow: "hidden" }}>
+        {/* Grid overlay */}
         <div style={{ position: "absolute", inset: 0, opacity: 0.06, backgroundImage: "linear-gradient(rgba(255,255,255,0.5) 1px,transparent 1px),linear-gradient(90deg,rgba(255,255,255,0.5) 1px,transparent 1px)", backgroundSize: "60px 60px" }} />
+        {/* Glow */}
         <div style={{ position: "absolute", width: 600, height: 600, borderRadius: "50%", background: "radial-gradient(circle,rgba(0,163,109,0.35) 0%,transparent 70%)", top: -100, right: -100 }} />
-        <div style={{ position: "relative", zIndex: 1, maxWidth: 820 }}>
-          <div style={{ display: "inline-flex", alignItems: "center", gap: 8, background: "rgba(255,255,255,0.12)", border: "1px solid rgba(255,255,255,0.2)", borderRadius: 50, padding: "7px 18px", fontSize: "0.82rem", color: "rgba(255,255,255,0.9)", fontWeight: 500, marginBottom: 28 }}>
-            <span style={{ width: 7, height: 7, borderRadius: "50%", background: "#4ade80", boxShadow: "0 0 8px #4ade80" }} />
-            Diseñado para contadores en Costa Rica
+        {/* Rotating rings */}
+        <div style={{ position: "absolute", width: 700, height: 700, borderRadius: "50%", border: "1px solid rgba(0,135,90,0.12)", top: "50%", left: "50%", animation: "rotateGlow 30s linear infinite" }} />
+        <div style={{ position: "absolute", width: 500, height: 500, borderRadius: "50%", border: "1px solid rgba(0,135,90,0.08)", top: "50%", left: "50%", animation: "rotateGlow 20s linear infinite reverse" }} />
+        {/* Floating numbers */}
+        <div style={{ position: "absolute", inset: 0, overflow: "hidden", pointerEvents: "none" }}>
+          {floatingNums.map((n, i) => <FloatingNumber key={i} {...n} />)}
+        </div>
+
+        <div className="f0" style={{ display: "inline-flex", alignItems: "center", gap: 8, background: "rgba(255,255,255,0.12)", border: "1px solid rgba(255,255,255,0.2)", borderRadius: 50, padding: "7px 18px", fontSize: "0.82rem", color: "rgba(255,255,255,0.9)", fontWeight: 500, marginBottom: 28, position: "relative", zIndex: 1 }}>
+          <span style={{ width: 7, height: 7, borderRadius: "50%", background: "#4ade80", boxShadow: "0 0 8px #4ade80", animation: "pulseDot 2s infinite" }} />
+          Diseñado para contadores en Costa Rica
+        </div>
+
+        <h1 className="f1" style={{ fontFamily: "'DM Serif Display', serif", fontSize: "clamp(2.8rem,6vw,4.2rem)", color: "#fff", lineHeight: 1.1, marginBottom: 24, position: "relative", zIndex: 1, maxWidth: 820 }}>
+          Cierra los estados financieros de<br />
+          <span className="shimmer-text"><em>todas tus empresas cliente</em></span><br />
+          en menos de una hora
+        </h1>
+
+        <p className="f2" style={{ fontSize: "clamp(1rem,2vw,1.18rem)", color: "rgba(255,255,255,0.78)", lineHeight: 1.75, maxWidth: 580, margin: "0 auto 40px", position: "relative", zIndex: 1 }}>
+          Sin Excel. Sin errores de cuadre. Sin perder el hilo entre empresas.<br />
+          AppContable organiza la contabilidad de todos tus clientes en un solo lugar.
+        </p>
+
+        <div className="f3" style={{ display: "flex", gap: 14, justifyContent: "center", flexWrap: "wrap", position: "relative", zIndex: 1 }}>
+          <button onClick={() => navigate("/login")} style={{ background: "#fff", color: "#00693E", padding: "14px 32px", borderRadius: 10, border: "none", fontFamily: "'DM Sans',sans-serif", fontWeight: 700, fontSize: "1rem", cursor: "pointer", boxShadow: "0 8px 24px rgba(0,0,0,0.2)", transition: "all 0.25s" }}>
+            Probar gratis 7 días →
+          </button>
+          <a href="#demo" style={{ background: "transparent", color: "#fff", padding: "14px 32px", borderRadius: 10, border: "1.5px solid rgba(255,255,255,0.35)", fontFamily: "'DM Sans',sans-serif", fontWeight: 500, fontSize: "1rem", cursor: "pointer", textDecoration: "none", display: "inline-block" }}>
+            Ver cómo funciona
+          </a>
+        </div>
+
+        <p className="f4" style={{ marginTop: 18, fontSize: "0.82rem", color: "rgba(255,255,255,0.5)", position: "relative", zIndex: 1 }}>Sin tarjeta de crédito · Cancela cuando quieras</p>
+
+        <div className="f4" style={{ display: "flex", gap: 48, justifyContent: "center", flexWrap: "wrap", marginTop: 64, paddingTop: 40, borderTop: "1px solid rgba(255,255,255,0.12)", width: "100%", maxWidth: 800, position: "relative", zIndex: 1 }}>
+          {STATS.map((s) => (
+            <div key={s.label} style={{ textAlign: "center" }}>
+              <div style={{ fontFamily: "'DM Serif Display',serif", fontSize: "2.4rem", color: "#86efac" }}>{s.value}</div>
+              <div style={{ fontSize: "0.78rem", color: "rgba(255,255,255,0.6)", marginTop: 4 }}>{s.label}</div>
+            </div>
+          ))}
+        </div>
+      </section>
+
+      {/* ── PROBLEMAS ── */}
+      <section id="problemas" style={{ padding: "100px 24px" }}>
+        <div style={{ maxWidth: 1100, margin: "0 auto" }}>
+          <div style={{ textAlign: "center", marginBottom: 56 }}>
+            <span style={sectionTag}>💬 El problema</span>
+            <h2 style={{ fontFamily: "'DM Serif Display',serif", fontSize: "clamp(2rem,4vw,2.8rem)", marginBottom: 14 }}>¿Te suena familiar alguna de estas?</h2>
+            <p style={{ color: "rgba(255,255,255,0.5)", maxWidth: 500, margin: "0 auto" }}>Si eres contador independiente o tienes un estudio contable, estas situaciones te están costando horas cada semana.</p>
           </div>
-          <h1 style={{ fontFamily: "'DM Serif Display', serif", fontSize: "clamp(2.8rem,6vw,4.2rem)", color: "#fff", lineHeight: 1.1, marginBottom: 24 }}>
-            Cierra los estados financieros de<br />
-            <em style={{ color: "#86efac" }}>todas tus empresas cliente</em><br />
-            en menos de una hora
-          </h1>
-          <p style={{ fontSize: "clamp(1rem,2vw,1.18rem)", color: "rgba(255,255,255,0.78)", lineHeight: 1.75, maxWidth: 580, margin: "0 auto 40px" }}>
-            Sin Excel. Sin errores de cuadre. Sin perder el hilo entre empresas.<br />
-            AppContable organiza la contabilidad de todos tus clientes en un solo lugar.
-          </p>
-          <div style={{ display: "flex", gap: 14, justifyContent: "center", flexWrap: "wrap" }}>
-            <button onClick={() => navigate("/login")} style={{ background: "#fff", color: "#00693E", padding: "14px 32px", borderRadius: 10, border: "none", fontFamily: "'DM Sans',sans-serif", fontWeight: 700, fontSize: "1rem", cursor: "pointer", boxShadow: "0 8px 24px rgba(0,0,0,0.2)", transition: "all 0.25s" }}>
-              Probar gratis 7 días →
-            </button>
-            <a href="#demo" style={{ background: "transparent", color: "#fff", padding: "14px 32px", borderRadius: 10, border: "1.5px solid rgba(255,255,255,0.35)", fontFamily: "'DM Sans',sans-serif", fontWeight: 500, fontSize: "1rem", cursor: "pointer", textDecoration: "none", display: "inline-block" }}>
-              Ver cómo funciona
-            </a>
-          </div>
-          <p style={{ marginTop: 18, fontSize: "0.82rem", color: "rgba(255,255,255,0.5)" }}>Sin tarjeta de crédito · Cancela cuando quieras</p>
-          <div style={{ display: "flex", gap: 48, justifyContent: "center", flexWrap: "wrap", marginTop: 64, paddingTop: 40, borderTop: "1px solid rgba(255,255,255,0.12)" }}>
-            {STATS.map((s) => (
-              <div key={s.label} style={{ textAlign: "center" }}>
-                <div style={{ fontFamily: "'DM Serif Display',serif", fontSize: "2.4rem", color: "#86efac" }}>{s.value}</div>
-                <div style={{ fontSize: "0.78rem", color: "rgba(255,255,255,0.6)", marginTop: 4 }}>{s.label}</div>
+          <div style={{ display: "grid", gridTemplateColumns: "repeat(auto-fit,minmax(240px,1fr))", gap: 20 }}>
+            {[
+              { icon: "🗂️", color: "#ef4444", title: "Datos de empresas mezclados",       desc: '"Manejo 5 empresas en hojas de cálculo diferentes y siempre termino confundiendo los datos de una con otra."' },
+              { icon: "📁", color: "#f59e0b", title: "Archivos imposibles de encontrar",   desc: '"Tengo los archivos de cada cliente regados entre carpetas, correos y USB. Cuando necesito algo urgente, nunca encuentro el período correcto."' },
+              { icon: "😓", color: "#8b5cf6", title: "Los reportes toman días",             desc: '"Cuando el cliente me pide sus reportes financieros tengo que avisarle que espere días, porque armar todo toma más tiempo del que debería."' },
+              { icon: "😰", color: "#3b82f6", title: "No sabes qué está pendiente",         desc: '"No tengo forma de saber rápido qué facturas están pendientes de pago o qué le debo declarar al fisco este mes."' },
+            ].map((c, i) => (
+              <div key={i} style={{ background: "rgba(255,255,255,0.04)", borderRadius: 16, padding: "28px 28px 28px 36px", border: "1px solid rgba(255,255,255,0.07)", position: "relative", overflow: "hidden" }}>
+                <div style={{ position: "absolute", top: 0, left: 0, width: 4, height: "100%", borderRadius: "16px 0 0 16px", background: c.color }} />
+                <div style={{ fontSize: "2.2rem", marginBottom: 14 }}>{c.icon}</div>
+                <h3 style={{ fontSize: "1rem", fontWeight: 700, marginBottom: 8, color: "#fff" }}>{c.title}</h3>
+                <p style={{ color: "rgba(255,255,255,0.5)", fontSize: "0.88rem", lineHeight: 1.7, margin: 0, fontStyle: "italic" }}>{c.desc}</p>
               </div>
             ))}
           </div>
         </div>
       </section>
 
-      {/* PROBLEMAS */}
-      <section id="problemas" style={{ padding: "100px 24px", background: "#f3f4f6" }}>
-        <div style={{ maxWidth: 1100, margin: "0 auto" }}>
-          <div style={{ textAlign: "center", marginBottom: 56 }}>
-            <span style={S.tag}>💬 El problema</span>
-            <h2 style={{ ...S.h2, fontFamily: "'DM Serif Display',serif" }}>¿Te suena familiar alguna de estas?</h2>
-            <p style={{ ...S.sub, margin: "0 auto" }}>Si eres contador independiente o tienes un estudio contable, estas situaciones te están costando horas cada semana.</p>
+      {/* ── DEMO — Steps + Panel ── */}
+      <section id="demo" style={{ padding: "100px 24px", background: "rgba(0,135,90,0.03)" }}>
+        <div style={{ maxWidth: 1150, margin: "0 auto" }}>
+          <div style={{ textAlign: "center", marginBottom: 60 }}>
+            <span style={sectionTag}>⚡ Cómo funciona</span>
+            <h2 style={{ fontFamily: "'DM Serif Display',serif", fontSize: "clamp(2rem,4vw,2.8rem)", marginBottom: 14 }}>De cero a estados financieros completos</h2>
+            <p style={{ color: "rgba(255,255,255,0.5)", maxWidth: 520, margin: "0 auto" }}>El flujo contable completo — desde el registro hasta los estados financieros — en un solo lugar.</p>
           </div>
-          <div style={{ display: "grid", gridTemplateColumns: "repeat(auto-fit,minmax(240px,1fr))", gap: 20 }}>
-            {[
-              { icon: "🗂️", title: "Datos de empresas mezclados",        desc: '"Manejo 5 empresas en hojas de cálculo diferentes y siempre termino confundiendo los datos de una con otra."' },
-              { icon: "📁", title: "Archivos imposibles de encontrar",    desc: '"Tengo los archivos de cada cliente regados entre carpetas, correos y USB. Cuando necesito algo urgente, nunca encuentro el período correcto."' },
-              { icon: "😓", title: "Los reportes toman días",             desc: '"Cuando el cliente me pide sus reportes financieros tengo que avisarle que espere días, porque armar todo toma más tiempo del que debería."' },
-              { icon: "😰", title: "No sabes qué está pendiente",         desc: '"No tengo forma de saber rápido qué facturas están pendientes de pago o qué le debo declarar al fisco este mes."' },
-            ].map((c) => <FeatureCard key={c.title} {...c} />)}
-          </div>
-        </div>
-      </section>
 
-      {/* DEMO */}
-      <section id="demo" style={{ padding: "100px 24px", background: "#fff" }}>
-        <div style={{ maxWidth: 1100, margin: "0 auto" }}>
-          <div style={{ textAlign: "center", marginBottom: 52 }}>
-            <span style={S.tag}>⚡ Cómo funciona</span>
-            <h2 style={{ ...S.h2, fontFamily: "'DM Serif Display',serif" }}>De cero a estado financiero completo</h2>
-            <p style={{ ...S.sub, margin: "0 auto" }}>El flujo contable completo — desde el registro hasta los estados financieros — en un solo lugar.</p>
-          </div>
-          <div style={{ display: "grid", gridTemplateColumns: "1fr 1.2fr", gap: 56, alignItems: "start" }}>
+          <div style={{ display: "grid", gridTemplateColumns: "420px 1fr", gap: 56, alignItems: "start" }}>
 
-            {/* Steps */}
+            {/* LEFT — steps */}
             <div>
               {DEMO_STEPS.map((step, i) => (
-                <div
-                  key={i}
-                  onClick={() => goToStep(i)}
+                <div key={i} onClick={() => goToStep(i)}
                   style={{
-                    display: "flex", gap: 16, padding: "16px 14px",
-                    borderLeft: `2px solid ${demoIdx === i ? "#00693E" : "#d1d5db"}`,
-                    background: demoIdx === i ? "#f0fdf4" : "transparent",
+                    display: "flex", gap: 16, padding: "18px 16px",
+                    borderLeft: `2px solid ${demoIdx === i ? "#00693E" : "rgba(255,255,255,0.1)"}`,
+                    background: demoIdx === i ? "rgba(0,135,90,0.15)" : "transparent",
                     cursor: "pointer", transition: "all 0.25s", marginLeft: 14,
-                    borderRadius: "0 10px 10px 0",
-                  }}
-                >
+                    borderRadius: "0 12px 12px 0",
+                    border: demoIdx === i ? "1px solid rgba(0,135,90,0.35)" : "1px solid transparent",
+                    // eslint-disable-next-line no-dupe-keys
+                    borderLeft: `2px solid ${demoIdx === i ? "#00693E" : "rgba(255,255,255,0.1)"}`,
+                    marginBottom: 4,
+                  }}>
                   <span style={{
-                    width: 32, height: 32, borderRadius: "50%", flexShrink: 0,
-                    background: demoIdx === i ? "#00693E" : "#f3f4f6",
-                    color: demoIdx === i ? "#fff" : "#6b7280",
+                    width: 34, height: 34, borderRadius: "50%", flexShrink: 0,
+                    background: demoIdx === i ? "#00693E" : "rgba(255,255,255,0.07)",
+                    color: demoIdx === i ? "#fff" : "rgba(255,255,255,0.4)",
                     display: "flex", alignItems: "center", justifyContent: "center",
-                    fontWeight: 700, fontSize: "0.78rem", marginLeft: -28,
-                    border: `2px solid ${demoIdx === i ? "#00693E" : "#d1d5db"}`,
-                    boxShadow: demoIdx === i ? "0 0 0 4px #f0fdf4" : "none",
-                    transition: "all 0.25s",
+                    fontWeight: 700, fontSize: "0.8rem", marginLeft: -30,
+                    border: `2px solid ${demoIdx === i ? "#00693E" : "rgba(255,255,255,0.12)"}`,
+                    boxShadow: demoIdx === i ? "0 0 0 4px rgba(0,135,90,0.15)" : "none",
+                    // eslint-disable-next-line no-dupe-keys
+                    transition: "all 0.25s", flexShrink: 0,
                   }}>{step.num}</span>
                   <div style={{ flex: 1 }}>
-                    <div style={{ fontWeight: 700, fontSize: "0.88rem", color: demoIdx === i ? "#00693E" : "#0a0f0d", marginBottom: 3 }}>{step.title}</div>
-                    <div style={{ fontSize: "0.8rem", color: "#6b7280", lineHeight: 1.5 }}>{step.desc}</div>
-                    {/* Progress bar */}
+                    <div style={{ fontWeight: 700, fontSize: "0.9rem", color: demoIdx === i ? "#86efac" : "rgba(255,255,255,0.85)", marginBottom: 4 }}>{step.title}</div>
+                    <div style={{ fontSize: "0.82rem", color: "rgba(255,255,255,0.45)", lineHeight: 1.55 }}>{step.desc}</div>
                     {demoIdx === i && (
-                      <div style={{ height: 2, background: "#d1fae5", borderRadius: 2, marginTop: 8, overflow: "hidden" }}>
-                        <div style={{ height: "100%", background: "#00693E", borderRadius: 2, width: `${progress}%`, transition: "width 0.1s linear" }} />
-                      </div>
+                      <>
+                        <div style={{ marginTop: 8, fontSize: "0.72rem", color: "rgba(0,209,130,0.7)", fontWeight: 500 }}>{step.detail}</div>
+                        <div style={{ height: 2, background: "rgba(0,135,90,0.25)", borderRadius: 2, marginTop: 10, overflow: "hidden" }}>
+                          <div style={{ height: "100%", background: "#00875A", borderRadius: 2, width: `${progress}%`, transition: "width 0.1s linear" }} />
+                        </div>
+                      </>
                     )}
                   </div>
                 </div>
               ))}
             </div>
 
-            {/* Screen */}
-            <div style={{ background: "#f3f4f6", borderRadius: 14, overflow: "hidden", border: "1px solid #d1d5db", boxShadow: "0 20px 60px rgba(0,0,0,0.1)", position: "sticky", top: 90 }}>
+            {/* RIGHT — screen */}
+            <div style={{ background: "#f3f4f6", borderRadius: 14, overflow: "hidden", border: "1px solid #d1d5db", boxShadow: "0 0 50px rgba(0,105,62,0.2), 0 20px 60px rgba(0,0,0,0.3)", position: "sticky", top: 90 }}>
               <div style={{ background: "#e5e7eb", padding: "9px 14px", display: "flex", alignItems: "center", gap: 7 }}>
                 {["#fc5f57","#ffbb2c","#27c840"].map((c) => <span key={c} style={{ width: 11, height: 11, borderRadius: "50%", background: c }} />)}
                 <span style={{ flex: 1, textAlign: "center", fontSize: "0.7rem", color: "#6b7280", fontFamily: "monospace" }}>appcontable.it.com</span>
               </div>
-              <div style={{ padding: 20, minHeight: 380, animation: "panelIn 0.35s ease" }}>
+              <div style={{ padding: 20, minHeight: 400, animation: "panelIn 0.35s ease" }} key={demoIdx}>
                 <ActivePanel />
               </div>
             </div>
@@ -619,17 +682,23 @@ function Landing() {
         </div>
       </section>
 
-      {/* EARLY ADOPTERS */}
-      <section style={{ padding: "100px 24px", background: "linear-gradient(135deg,#003d24,#111a14)" }}>
+      {/* ── EARLY ADOPTERS ── */}
+      <section style={{ padding: "100px 24px", background: "linear-gradient(135deg,rgba(0,61,36,0.6) 0%,transparent 100%)" }}>
         <div style={{ maxWidth: 700, margin: "0 auto", textAlign: "center" }}>
-          <span style={{ ...S.tag, background: "rgba(255,255,255,0.1)", color: "rgba(255,255,255,0.8)", borderColor: "rgba(255,255,255,0.15)" }}>🌱 Early adopters</span>
-          <h2 style={{ fontFamily: "'DM Serif Display',serif", fontSize: "clamp(1.9rem,3.5vw,2.7rem)", color: "#fff", marginBottom: 12 }}>Sé de los primeros.<br />Tu opinión vale acceso gratis.</h2>
+          <span style={{ ...sectionTag, background: "rgba(251,191,36,0.15)", color: "#fbbf24", borderColor: "rgba(251,191,36,0.25)" }}>🌱 Early adopters</span>
+          <h2 style={{ fontFamily: "'DM Serif Display',serif", fontSize: "clamp(1.9rem,3.5vw,2.7rem)", color: "#fff", marginBottom: 12 }}>
+            Sé de los primeros.<br /><span style={{ fontStyle: "italic", color: "#86efac" }}>Tu opinión vale acceso gratis.</span>
+          </h2>
           <p style={{ color: "rgba(255,255,255,0.65)", fontSize: "1rem", lineHeight: 1.7, maxWidth: 520, margin: "0 auto 40px" }}>AppContable está en sus primeras semanas. Buscamos contadores que quieran probarlo a fondo y compartir su experiencia real.</p>
           <div style={{ background: "rgba(255,255,255,0.07)", border: "1px solid rgba(255,255,255,0.12)", borderRadius: 20, padding: 40, textAlign: "left" }}>
             <div style={{ fontFamily: "'DM Serif Display',serif", fontSize: "1.6rem", color: "#fff", marginBottom: 12 }}>Acceso completo gratis por 30 días</div>
             <div style={{ color: "rgba(255,255,255,0.7)", fontSize: "0.95rem", lineHeight: 1.7, marginBottom: 28 }}>A cambio de una reseña honesta al finalizar. Sin trampa, sin presión — si no te funciona, lo dices.</div>
             <div style={{ display: "flex", flexDirection: "column", gap: 10, marginBottom: 32 }}>
-              {EARLY_PERKS.map((p) => <div key={p} style={{ display: "flex", alignItems: "center", gap: 12, color: "rgba(255,255,255,0.9)", fontSize: "0.9rem" }}><span style={{ color: "#4ade80" }}>✓</span>{p}</div>)}
+              {EARLY_PERKS.map((p) => (
+                <div key={p} style={{ display: "flex", alignItems: "center", gap: 12, color: "rgba(255,255,255,0.9)", fontSize: "0.9rem" }}>
+                  <span style={{ color: "#4ade80" }}>✓</span>{p}
+                </div>
+              ))}
             </div>
             <button onClick={() => navigate("/login")} style={{ width: "100%", padding: "14px", borderRadius: 10, background: "#fff", color: "#00693E", border: "none", fontFamily: "'DM Sans',sans-serif", fontWeight: 700, fontSize: "1rem", cursor: "pointer" }}>
               Quiero ser early adopter →
@@ -639,35 +708,33 @@ function Landing() {
         </div>
       </section>
 
-      {/* WHY */}
-      <section style={{ padding: "100px 24px", background: "#fff" }}>
+      {/* ── WHY ── */}
+      <section style={{ padding: "100px 24px" }}>
         <div style={{ maxWidth: 1100, margin: "0 auto" }}>
           <div style={{ textAlign: "center", marginBottom: 56 }}>
-            <span style={S.tag}>🏆 Por qué AppContable</span>
-            <h2 style={{ ...S.h2, fontFamily: "'DM Serif Display',serif" }}>No es otro Excel disfrazado</h2>
-            <p style={{ ...S.sub, margin: "0 auto" }}>Construido específicamente para la forma en que trabaja un contador costarricense.</p>
+            <span style={sectionTag}>🏆 Por qué AppContable</span>
+            <h2 style={{ fontFamily: "'DM Serif Display',serif", fontSize: "clamp(2rem,4vw,2.8rem)", marginBottom: 14 }}>No es otro Excel disfrazado</h2>
+            <p style={{ color: "rgba(255,255,255,0.5)", maxWidth: 500, margin: "0 auto" }}>Construido específicamente para la forma en que trabaja un contador costarricense.</p>
           </div>
-          <div style={{ display: "grid", gridTemplateColumns: "1fr 1fr", gap: 20 }}>
+          <div style={{ display: "grid", gridTemplateColumns: "repeat(auto-fit,minmax(300px,1fr))", gap: 20 }}>
             {[
-              { icon: "📒", title: "Un libro por empresa, todo separado",     desc: "Cada cliente vive en su propio libro. Nunca más datos mezclados entre empresas." },
-              { icon: "⚖️", title: "Auto-balance en tiempo real",              desc: "El sistema detecta el error al instante — no al final del mes." },
-              { icon: "📊", title: "Reportes automáticos listos para imprimir",desc: "Estado de Resultados, Balanza, Situación y Cuentas T en segundos." },
-              { icon: "🧾", title: "IVA costarricense incluido",               desc: "Escribe '13%' y el monto se calcula solo. Sin fórmulas aparte." },
-              { icon: "⚠️", title: "Panel de cuentas pendientes",              desc: "Ve de un vistazo qué está por cobrar, pagar o declarar." },
+              { icon: "📒", title: "Un libro por empresa, todo separado",      desc: "Cada cliente vive en su propio libro. Nunca más datos mezclados entre empresas." },
+              { icon: "⚖️", title: "Auto-balance en tiempo real",               desc: "El sistema detecta el error al instante — no al final del mes." },
+              { icon: "📊", title: "Reportes automáticos listos para imprimir", desc: "Estado de Resultados, Balanza, Situación y Cuentas T en segundos." },
+              { icon: "🧾", title: "IVA costarricense incluido",                desc: "Escribe '13%' y el monto se calcula solo. Sin fórmulas aparte." },
+              { icon: "⚠️", title: "Panel de cuentas pendientes",               desc: "Ve de un vistazo qué está por cobrar, pagar o declarar." },
               { icon: "🔒", title: "Datos seguros y aislados",                  desc: "Cada usuario solo ve sus propios datos. Protección CSRF, JWT y HTTPS." },
-            ].map((item) => (
-              <FeatureCard key={item.title} {...item} />
-            ))}
+            ].map((item) => <FeatureCard key={item.title} {...item} />)}
           </div>
 
           {/* VS table */}
-          <div style={{ marginTop: 48, background: "#f3f4f6", borderRadius: 14, padding: 28, overflowX: "auto" }}>
-            <div style={{ fontWeight: 700, fontSize: "0.9rem", marginBottom: 16, color: "#374151", textAlign: "center" }}>AppContable vs las alternativas</div>
+          <div style={{ marginTop: 48, background: "rgba(255,255,255,0.04)", borderRadius: 14, padding: 28, overflowX: "auto", border: "1px solid rgba(255,255,255,0.07)" }}>
+            <div style={{ fontWeight: 700, fontSize: "0.9rem", marginBottom: 16, color: "rgba(255,255,255,0.6)", textAlign: "center" }}>AppContable vs las alternativas</div>
             <table style={{ width: "100%", borderCollapse: "collapse", fontSize: "0.83rem" }}>
               <thead>
                 <tr>
                   {["Característica","AppContable","Excel manual","Apps genéricas"].map((h, i) => (
-                    <th key={h} style={{ padding: "9px 14px", textAlign: i === 0 ? "left" : "center", fontWeight: 700, background: i === 1 ? "#f0fdf4" : "transparent", color: i === 1 ? "#00693E" : "#0a0f0d" }}>{h}</th>
+                    <th key={h} style={{ padding: "9px 14px", textAlign: i === 0 ? "left" : "center", fontWeight: 700, color: i === 1 ? "#86efac" : "rgba(255,255,255,0.45)", borderBottom: "1px solid rgba(255,255,255,0.08)" }}>{h}</th>
                   ))}
                 </tr>
               </thead>
@@ -681,9 +748,9 @@ function Landing() {
                   ["Sin instalación requerida","✓","Parcial","Parcial"],
                   ["Precio mensual","$20","$10+","$50+"],
                 ].map((row) => (
-                  <tr key={row[0]}>
+                  <tr key={row[0]} style={{ borderBottom: "1px solid rgba(255,255,255,0.05)" }}>
                     {row.map((cell, i) => (
-                      <td key={i} style={{ padding: "9px 14px", borderTop: "1px solid #d1d5db", textAlign: i === 0 ? "left" : "center", fontWeight: i === 0 ? 500 : 400, color: cell === "✓" || (i === 1 && cell === "$20") ? "#00875A" : cell === "✗" ? "#ef4444" : "#374151" }}>
+                      <td key={i} style={{ padding: "9px 14px", textAlign: i === 0 ? "left" : "center", fontWeight: i === 0 ? 500 : 700, color: cell === "✓" ? "#4ade80" : cell === "✗" ? "#ef4444" : i === 1 ? "#86efac" : "rgba(255,255,255,0.45)" }}>
                         {cell}
                       </td>
                     ))}
@@ -695,28 +762,28 @@ function Landing() {
         </div>
       </section>
 
-      {/* PRICING */}
-      <section id="precio" style={{ padding: "100px 24px", background: "#f3f4f6" }}>
+      {/* ── PRICING ── */}
+      <section id="precio" style={{ padding: "100px 24px", background: "rgba(0,135,90,0.03)" }}>
         <div style={{ maxWidth: 460, margin: "0 auto", textAlign: "center" }}>
-          <span style={S.tag}>💳 Precio</span>
-          <h2 style={{ ...S.h2, fontFamily: "'DM Serif Display',serif" }}>Simple y transparente</h2>
-          <p style={{ ...S.sub, margin: "0 auto" }}>Un solo plan. Todo incluido. Sin sorpresas.</p>
-          <div style={{ background: "#fff", borderRadius: 22, padding: "44px 36px", boxShadow: "0 20px 60px rgba(0,0,0,0.1)", border: "2px solid #d1fae5", marginTop: 36, position: "relative", overflow: "hidden" }}>
+          <span style={sectionTag}>💳 Precio</span>
+          <h2 style={{ fontFamily: "'DM Serif Display',serif", fontSize: "clamp(2rem,4vw,2.8rem)", marginBottom: 14 }}>Simple y transparente</h2>
+          <p style={{ color: "rgba(255,255,255,0.5)", marginBottom: 36 }}>Un solo plan. Todo incluido. Sin sorpresas.</p>
+          <div className="green-glow" style={{ background: "rgba(255,255,255,0.04)", borderRadius: 22, padding: "44px 36px", border: "1px solid rgba(0,135,90,0.3)", position: "relative", overflow: "hidden" }}>
             <div style={{ position: "absolute", top: 18, right: -28, background: "#00875A", color: "#fff", fontSize: "0.7rem", fontWeight: 700, padding: "4px 38px", transform: "rotate(35deg)", letterSpacing: "0.5px" }}>POPULAR</div>
-            <div style={{ fontSize: "0.85rem", color: "#00875A", fontWeight: 600, marginBottom: 8 }}>🎁 7 días gratis — sin tarjeta</div>
-            <div style={{ fontFamily: "'DM Serif Display',serif", fontSize: "3.4rem", color: "#0a0f0d", lineHeight: 1 }}><sup style={{ fontSize: "1.4rem", verticalAlign: "super" }}>$</sup>20</div>
-            <div style={{ fontSize: "0.83rem", color: "#6b7280", marginTop: 4, marginBottom: 28 }}>por mes · cancela cuando quieras</div>
-            <ul style={{ listStyle: "none", textAlign: "left", marginBottom: 28 }}>
+            <div style={{ fontSize: "0.85rem", color: "#86efac", fontWeight: 600, marginBottom: 8 }}>🎁 7 días gratis — sin tarjeta</div>
+            <div style={{ fontFamily: "'DM Serif Display',serif", fontSize: "3.4rem", color: "#fff", lineHeight: 1 }}><sup style={{ fontSize: "1.4rem", verticalAlign: "super" }}>$</sup>20</div>
+            <div style={{ fontSize: "0.83rem", color: "rgba(255,255,255,0.45)", marginTop: 4, marginBottom: 28 }}>por mes · cancela cuando quieras</div>
+            <ul style={{ listStyle: "none", textAlign: "left", marginBottom: 28, padding: 0 }}>
               {PRICING_FEATURES.map((f) => (
-                <li key={f} style={{ display: "flex", alignItems: "center", gap: 10, padding: "8px 0", borderBottom: "1px solid #f3f4f6", fontSize: "0.88rem" }}>
-                  <span style={{ color: "#00875A", fontWeight: 700 }}>✓</span>{f}
+                <li key={f} style={{ display: "flex", alignItems: "center", gap: 10, padding: "8px 0", borderBottom: "1px solid rgba(255,255,255,0.06)", fontSize: "0.88rem", color: "rgba(255,255,255,0.78)" }}>
+                  <span style={{ color: "#4ade80", fontWeight: 700 }}>✓</span>{f}
                 </li>
               ))}
             </ul>
-            <button onClick={() => navigate("/login")} style={{ display: "block", width: "100%", padding: 14, borderRadius: 10, background: "linear-gradient(135deg,#00693E,#00875A)", color: "#fff", border: "none", fontFamily: "'DM Sans',sans-serif", fontWeight: 700, fontSize: "1rem", cursor: "pointer" }}>
+            <button onClick={() => navigate("/login")} style={{ display: "block", width: "100%", padding: 14, borderRadius: 10, background: "linear-gradient(135deg,#00693E,#00875A)", color: "#fff", border: "none", fontFamily: "'DM Sans',sans-serif", fontWeight: 700, fontSize: "1rem", cursor: "pointer", boxShadow: "0 8px 32px rgba(0,105,62,0.4)" }}>
               Empezar gratis 7 días →
             </button>
-            <div style={{ marginTop: 18, padding: 14, background: "#f0fdf4", borderRadius: 10, fontSize: "0.8rem", color: "#00693E", display: "flex", alignItems: "flex-start", gap: 10, textAlign: "left" }}>
+            <div style={{ marginTop: 18, padding: 14, background: "rgba(0,135,90,0.12)", borderRadius: 10, fontSize: "0.8rem", color: "#86efac", display: "flex", alignItems: "flex-start", gap: 10, textAlign: "left", border: "1px solid rgba(0,135,90,0.2)" }}>
               <span style={{ fontSize: "1.2rem" }}>🛡️</span>
               <span><strong>Garantía de valor:</strong> Si en los primeros 7 días no ahorraste al menos 2 horas de trabajo, no pagas nada.</span>
             </div>
@@ -724,47 +791,46 @@ function Landing() {
         </div>
       </section>
 
-      {/* FAQ */}
-      <section id="faq" style={{ padding: "100px 24px", background: "#fff" }}>
+      {/* ── FAQ ── */}
+      <section id="faq" style={{ padding: "100px 24px" }}>
         <div style={{ maxWidth: 700, margin: "0 auto" }}>
           <div style={{ textAlign: "center", marginBottom: 44 }}>
-            <span style={S.tag}>❓ Preguntas frecuentes</span>
-            <h2 style={{ ...S.h2, fontFamily: "'DM Serif Display',serif" }}>Todo lo que necesitas saber</h2>
+            <span style={sectionTag}>❓ Preguntas frecuentes</span>
+            <h2 style={{ fontFamily: "'DM Serif Display',serif", fontSize: "clamp(2rem,4vw,2.8rem)" }}>Todo lo que necesitas saber</h2>
           </div>
           {FAQ_ITEMS.map((item) => <FaqItem key={item.q} {...item} />)}
         </div>
       </section>
 
-      {/* FINAL CTA */}
-      <section style={{ padding: "120px 24px", background: "linear-gradient(160deg,#003d24,#00693E)", textAlign: "center" }}>
-        <h2 style={{ fontFamily: "'DM Serif Display',serif", fontSize: "clamp(2rem,4vw,3rem)", color: "#fff", marginBottom: 16, lineHeight: 1.2 }}>
-          Tu próximo cliente no tiene<br />que esperar días sus reportes
-        </h2>
-        <p style={{ color: "rgba(255,255,255,0.7)", fontSize: "1rem", marginBottom: 40, maxWidth: 480, margin: "0 auto 40px", lineHeight: 1.7 }}>
-          Empieza gratis hoy. En menos de 5 minutos tienes tu primer libro contable listo y tu primer asiento registrado.
-        </p>
-        <button onClick={() => navigate("/login")} style={{ background: "#fff", color: "#00693E", padding: "16px 40px", borderRadius: 10, border: "none", fontFamily: "'DM Sans',sans-serif", fontWeight: 700, fontSize: "1.05rem", cursor: "pointer", boxShadow: "0 8px 24px rgba(0,0,0,0.2)" }}>
-          Crear cuenta gratis →
-        </button>
-        <p style={{ marginTop: 16, fontSize: "0.78rem", color: "rgba(255,255,255,0.4)" }}>7 días gratis · Sin tarjeta · Cancela cuando quieras</p>
+      {/* ── FINAL CTA ── */}
+      <section style={{ padding: "120px 24px", background: "linear-gradient(160deg,#003d24,#001a10)", textAlign: "center", position: "relative", overflow: "hidden" }}>
+        <div style={{ position: "absolute", inset: 0, background: "radial-gradient(ellipse 60% 50% at 50% 100%,rgba(0,135,90,0.3) 0%,transparent 70%)", pointerEvents: "none" }} />
+        <div style={{ position: "relative", zIndex: 1, maxWidth: 600, margin: "0 auto" }}>
+          <h2 style={{ fontFamily: "'DM Serif Display',serif", fontSize: "clamp(2rem,5vw,3.2rem)", color: "#fff", marginBottom: 16, lineHeight: 1.2 }}>
+            Tu próximo cliente no tiene<br /><span style={{ fontStyle: "italic", color: "#86efac" }}>que esperar días sus reportes</span>
+          </h2>
+          <p style={{ color: "rgba(255,255,255,0.65)", fontSize: "1rem", marginBottom: 40, lineHeight: 1.7 }}>
+            Empieza gratis hoy. En menos de 5 minutos tienes tu primer libro contable listo y tu primer asiento registrado.
+          </p>
+          <button onClick={() => navigate("/login")} style={{ background: "#fff", color: "#00693E", padding: "16px 40px", borderRadius: 10, border: "none", fontFamily: "'DM Sans',sans-serif", fontWeight: 700, fontSize: "1.05rem", cursor: "pointer", boxShadow: "0 12px 40px rgba(0,105,62,0.5)", transition: "all 0.25s" }}>
+            Crear cuenta gratis →
+          </button>
+          <p style={{ marginTop: 16, fontSize: "0.78rem", color: "rgba(255,255,255,0.35)" }}>7 días gratis · Sin tarjeta · Cancela cuando quieras</p>
+        </div>
       </section>
 
-      {/* FOOTER */}
-      <footer style={{ background: "#0a0f0d", padding: "36px 48px", display: "flex", alignItems: "center", justifyContent: "space-between", flexWrap: "wrap", gap: 16 }}>
+      {/* ── FOOTER ── */}
+      <footer style={{ background: "#010804", padding: "32px 48px", display: "flex", alignItems: "center", justifyContent: "space-between", flexWrap: "wrap", gap: 16, borderTop: "1px solid rgba(0,135,90,0.12)" }}>
         <div style={{ display: "flex", alignItems: "center", gap: 10 }}>
-          <div style={{ width: 32, height: 32, borderRadius: 10, background: "linear-gradient(135deg,#00693E,#00875A)", display: "flex", alignItems: "center", justifyContent: "center", fontSize: 16 }}>📒</div>
+          <div style={{ width: 30, height: 30, borderRadius: 8, background: "linear-gradient(135deg,#00693E,#00875A)", display: "flex", alignItems: "center", justifyContent: "center", fontSize: 15 }}>📒</div>
           <span style={{ color: "#fff", fontWeight: 700 }}>AppContable</span>
         </div>
-        <p style={{ color: "rgba(255,255,255,0.3)", fontSize: "0.78rem" }}>© {new Date().getFullYear()} AppContable — Todos los derechos reservados</p>
+        <p style={{ color: "rgba(255,255,255,0.25)", fontSize: "0.78rem" }}>© {new Date().getFullYear()} AppContable — Todos los derechos reservados</p>
         <div style={{ display: "flex", gap: 24 }}>
-          <button onClick={() => navigate("/login")} style={{ color: "rgba(255,255,255,0.4)", background: "none", border: "none", fontSize: "0.78rem", cursor: "pointer" }}>Iniciar Sesión</button>
-          <a href="mailto:soporte@appcontable.it.com" style={{ color: "rgba(255,255,255,0.4)", textDecoration: "none", fontSize: "0.78rem" }}>Soporte</a>
+          <button onClick={() => navigate("/login")} style={{ color: "rgba(255,255,255,0.35)", background: "none", border: "none", fontSize: "0.78rem", cursor: "pointer" }}>Iniciar Sesión</button>
+          <a href="mailto:soporte@appcontable.it.com" style={{ color: "rgba(255,255,255,0.35)", textDecoration: "none", fontSize: "0.78rem" }}>Soporte</a>
         </div>
       </footer>
-
-      <style>{`
-        @keyframes panelIn { from{opacity:0;transform:translateY(6px)} to{opacity:1;transform:translateY(0)} }
-      `}</style>
     </div>
   );
 }
